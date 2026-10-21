@@ -9,8 +9,6 @@ export const services: Service[] = [
     description:
       'Complete installation, commissioning and maintenance of chilled water Fan Coil Units and Air Handling Units — keeping your building cool, efficient and quiet all year round.',
     icon: Fan,
-    image: '/images/services/fcu-ahu.jpg',
-    badge: 'HVAC Specialist',
     features: [
       'Supply & installation of FCUs and AHUs',
       'Chilled water piping, valves & insulation',
@@ -26,8 +24,6 @@ export const services: Service[] = [
     description:
       'From new installations to modifications during fit-outs, we design, install and maintain ductwork that moves air efficiently and meets site standards.',
     icon: Wind,
-    image: '/images/services/ducting.jpg',
-    badge: 'Site Duct Mechanics',
     features: [
       'Supply, return, fresh air & exhaust ducts',
       'Kitchen exhaust & ventilation ducts',
@@ -43,8 +39,6 @@ export const services: Service[] = [
     description:
       'Fabrication and installation of durable galvanized iron ducts and lightweight pre-insulated panel ducts, built to the right gauge and sealed for long-term performance.',
     icon: Layers,
-    image: '/images/services/gi-pi-duct.jpg',
-    badge: 'GI & PI Fabrication',
     features: [
       'GI duct fabrication & installation',
       'Pre-insulated (PI) panel ducts',
@@ -60,8 +54,6 @@ export const services: Service[] = [
     description:
       'Dust, mould and bacteria build up inside ductwork over time. Our cleaning service restores airflow and indoor air quality with minimal disruption to your home or office.',
     icon: Sparkles,
-    image: '/images/services/duct-cleaning.jpg',
-    badge: 'HEPA Sanitization',
     features: [
       'Mechanical brushing & HEPA vacuuming',
       'Diffuser & grille removal and washing',
@@ -77,8 +69,6 @@ export const services: Service[] = [
     description:
       'Safe, neat and code-compliant electrical installations for new homes and offices — from conduiting and wiring through to final testing and handover.',
     icon: Zap,
-    image: '/images/services/electrical.jpg',
-    badge: 'Electrical Mechanics',
     features: [
       'Conduiting & wiring for new projects',
       'Distribution boards, breakers & panels',
@@ -94,8 +84,6 @@ export const services: Service[] = [
     description:
       'Selection, installation and servicing of air-conditioning systems sized correctly for your space — so you get comfort without wasting energy.',
     icon: AirVent,
-    image: '/images/services/ac-works.jpg',
-    badge: 'Certified AC Mechanics',
     features: [
       'Split, ducted split & package units',
       'Copper piping & condensate drain lines',
@@ -111,8 +99,6 @@ export const services: Service[] = [
     description:
       'Reliable water supply and drainage systems for new builds and renovations, installed cleanly and pressure-tested before handover.',
     icon: Droplets,
-    image: '/images/services/plumbing.jpg',
-    badge: 'Plumbing & Pipe Mechanics',
     features: [
       'Water supply piping (PPR / CPVC)',
       'Drainage & sewage lines',

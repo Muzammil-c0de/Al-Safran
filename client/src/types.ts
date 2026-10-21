@@ -7,8 +7,6 @@ export interface Service {
   description: string;
   icon: LucideIcon;
   features: string[];
-  image?: string;
-  badge?: string;
 }
 
 export interface Project {

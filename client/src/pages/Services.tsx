@@ -42,46 +42,17 @@ export default function Services() {
                 <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
                   {/* Visual */}
                   <Reveal className={reversed ? 'lg:order-2' : ''}>
-                    <div className="group relative">
+                    <div className="relative">
                       <div
-                        className={`absolute -inset-3 rounded-3xl bg-brand-100/70 transition duration-500 group-hover:bg-brand-200/80 ${
-                          reversed ? '-rotate-2' : 'rotate-2'
-                        }`}
+                        className={`absolute -inset-3 rounded-3xl bg-brand-100 ${reversed ? '-rotate-2' : 'rotate-2'}`}
                       />
-                      <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-navy-900/10 bg-navy-900 shadow-2xl">
-                        {s.image ? (
-                          <>
-                            <img
-                              src={s.image}
-                              alt={`${s.title} mechanics at work`}
-                              loading="lazy"
-                              className="size-full object-cover transition duration-700 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/20 to-transparent" />
-                          </>
-                        ) : (
-                          <div className="relative grid size-full place-items-center bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950">
-                            <div className="absolute inset-0 bg-grid" />
-                            <div className="absolute -right-16 -bottom-16 size-72 rounded-full bg-brand-500/25 blur-3xl" />
-                            <div className="relative grid size-32 place-items-center rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur">
-                              <Icon className="size-16 text-brand-400" strokeWidth={1.4} />
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Badges & Numbering */}
-                        <div className="absolute top-5 left-5 flex items-center gap-2">
-                          <span className="grid size-10 place-items-center rounded-xl border border-white/20 bg-navy-900/80 text-brand-400 shadow-md backdrop-blur-md">
-                            <Icon className="size-5" />
-                          </span>
-                          {s.badge && (
-                            <span className="rounded-full border border-white/20 bg-white/90 px-3 py-1 text-xs font-semibold text-navy-900 shadow-sm backdrop-blur-md">
-                              {s.badge}
-                            </span>
-                          )}
+                      <div className="relative grid aspect-[4/3] place-items-center overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950">
+                        <div className="absolute inset-0 bg-grid" />
+                        <div className="absolute -right-16 -bottom-16 size-72 rounded-full bg-brand-500/25 blur-3xl" />
+                        <div className="relative grid size-32 place-items-center rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur">
+                          <Icon className="size-16 text-brand-400" strokeWidth={1.4} />
                         </div>
-
-                        <span className="absolute right-5 bottom-4 text-5xl font-extrabold text-white/30 backdrop-blur-[2px]">
+                        <span className="absolute top-6 left-6 text-7xl font-extrabold text-white/5">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                       </div>

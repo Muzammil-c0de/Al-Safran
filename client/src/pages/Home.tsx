@@ -65,21 +65,24 @@ export default function Home() {
           className="absolute inset-0 size-full object-cover object-[70%_center]"
           fetchPriority="high"
         />
-        <div className="container-x relative flex min-h-[600px] items-center pt-28 pb-14 lg:min-h-[640px]">
-          <div className="max-w-[34rem]">
+        {/* Soft white fade on the left (over the sky) so the text stays crisp */}
+        <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent max-md:from-white/85 max-md:via-white/70" />
+
+        <div className="container-x relative flex h-[460px] items-center sm:h-[480px] lg:h-[520px]">
+          <div className="max-w-xl">
             <span className="inline-flex animate-fade-up items-center gap-2 rounded-full bg-white/90 px-4 py-1.5 text-xs font-bold tracking-wide text-brand-600 shadow-sm">
               <span className="size-2 animate-pulse rounded-full bg-brand-500" />
               {site.slogan}
             </span>
             <h1
-              className="mt-5 animate-fade-up text-[2.1rem] leading-[1.12] text-navy-950 sm:text-[2.6rem] lg:text-5xl"
+              className="mt-5 animate-fade-up text-4xl leading-[1.1] text-navy-950 sm:text-5xl lg:text-[3.4rem]"
               style={{ animationDelay: '80ms' }}
             >
               Cooling systems built to <span className="text-brand-500">perform</span>, maintained to{' '}
               <span className="text-brand-500">last</span>
             </h1>
             <p
-              className="mt-5 max-w-md animate-fade-up text-base leading-relaxed font-semibold text-navy-950"
+              className="mt-5 max-w-lg animate-fade-up text-base leading-relaxed font-medium text-slate-700 sm:text-lg"
               style={{ animationDelay: '160ms' }}
             >
               Chilled water FCU/AHU, GI &amp; PI ductwork, duct cleaning, AC, electrical and plumbing works for new homes
@@ -93,17 +96,19 @@ export default function Home() {
                 Explore Services
               </Link>
             </div>
-
-            {/* Stats inside the banner */}
-            <dl className="mt-10 grid animate-fade-up grid-cols-4 gap-4 sm:gap-8" style={{ animationDelay: '320ms' }}>
-              {site.stats.map((s) => (
-                <div key={s.label}>
-                  <dt className="text-2xl font-extrabold text-brand-600 sm:text-3xl">{s.value}</dt>
-                  <dd className="mt-1 text-xs leading-snug font-semibold text-navy-950 sm:text-sm">{s.label}</dd>
-                </div>
-              ))}
-            </dl>
           </div>
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section className="border-b border-slate-200 bg-white">
+        <div className="container-x grid grid-cols-2 gap-6 py-8 lg:grid-cols-4">
+          {site.stats.map((s) => (
+            <div key={s.label} className="text-center">
+              <p className="text-3xl font-extrabold text-brand-600 sm:text-4xl">{s.value}</p>
+              <p className="mt-1 text-sm font-medium text-slate-600">{s.label}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -200,117 +205,6 @@ export default function Home() {
                 </Reveal>
               );
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* ON-SITE MECHANICS & FIELD SERVICES SHOWCASE */}
-      <section className="section bg-gradient-to-b from-slate-50 to-white">
-        <div className="container-x">
-          <SectionHeading
-            eyebrow="On-Site Expertise"
-            title="Certified mechanics & comprehensive site technical services"
-            subtitle="Equipped with thermal diagnostic cameras, digital manifolds, and advanced tools, our teams handle everything from complex plant rooms to precision AC installations."
-          />
-
-          <div className="mt-14 grid gap-8 lg:grid-cols-12 lg:items-center">
-            {/* Primary Site Service Highlight */}
-            <div className="lg:col-span-7">
-              <Reveal>
-                <div className="group relative overflow-hidden rounded-3xl border border-navy-900/10 bg-navy-900 shadow-2xl">
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
-                      src="/images/site/site-team.jpg"
-                      alt="Al Safran on-site MEP technical supervision and HVAC mechanics"
-                      className="size-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/40 to-transparent" />
-
-                    <div className="absolute top-5 left-5 flex flex-wrap gap-2">
-                      <span className="rounded-full border border-white/20 bg-navy-900/85 px-3 py-1 text-xs font-semibold text-white shadow-md backdrop-blur-md">
-                        On-Site Technical Supervision
-                      </span>
-                      <span className="rounded-full border border-brand-400/30 bg-brand-500/90 px-3 py-1 text-xs font-semibold text-white shadow-md backdrop-blur-md">
-                        Active Job Site
-                      </span>
-                    </div>
-
-                    <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 text-white">
-                      <h3 className="text-xl font-bold sm:text-2xl text-white">Full-Package MEP Site Engineering & Execution</h3>
-                      <p className="mt-2 text-sm text-navy-200 line-clamp-2 sm:line-clamp-none">
-                        Our senior site engineers and certified trade mechanics coordinate drawings, measurements, and physical installations together for seamless handover.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-
-            {/* Secondary Mechanic Focus Cards */}
-            <div className="space-y-4 lg:col-span-5">
-              <Reveal delay={100}>
-                <div className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md">
-                  <div className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-navy-900">
-                    <img
-                      src="/images/site/site-inspection.jpg"
-                      alt="AC Mechanic thermal camera site inspection"
-                      className="size-full object-cover transition duration-300 group-hover:scale-110"
-                    />
-                  </div>
-                  <div>
-                    <span className="inline-block rounded bg-brand-50 px-2 py-0.5 text-[11px] font-bold tracking-wide text-brand-700">
-                      AC MECHANICS & DIAGNOSTICS
-                    </span>
-                    <h4 className="mt-1 text-base font-bold text-navy-900">Infrared & Thermal Airflow Checks</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-slate-600">
-                      Identifying thermal leaks, blocked coils, and duct air velocity before commissioning.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={200}>
-                <div className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md">
-                  <div className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-navy-900">
-                    <img
-                      src="/images/site/ac-mechanic.jpg"
-                      alt="AC Mechanic outdoor condenser servicing"
-                      className="size-full object-cover transition duration-300 group-hover:scale-110"
-                    />
-                  </div>
-                  <div>
-                    <span className="inline-block rounded bg-blue-50 px-2 py-0.5 text-[11px] font-bold tracking-wide text-blue-700">
-                      REFRIGERATION & CHILLERS
-                    </span>
-                    <h4 className="mt-1 text-base font-bold text-navy-900">Precision Condenser & Gas Servicing</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-slate-600">
-                      R410A / R32 manifold diagnostics, vacuum evacuation, and compressor load analysis.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-
-              <Reveal delay={300}>
-                <div className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md">
-                  <div className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-navy-900">
-                    <img
-                      src="/images/services/fcu-ahu.jpg"
-                      alt="AHU and FCU Chilled Water mechanic"
-                      className="size-full object-cover transition duration-300 group-hover:scale-110"
-                    />
-                  </div>
-                  <div>
-                    <span className="inline-block rounded bg-emerald-50 px-2 py-0.5 text-[11px] font-bold tracking-wide text-emerald-700">
-                      CENTRAL PLANT ROOMS
-                    </span>
-                    <h4 className="mt-1 text-base font-bold text-navy-900">AHU & Chilled Water Commissioning</h4>
-                    <p className="mt-1 text-xs leading-relaxed text-slate-600">
-                      Motor alignment, valve balancing, filter replacements, and acoustic dampening.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
           </div>
         </div>
       </section>
