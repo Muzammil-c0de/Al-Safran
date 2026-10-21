@@ -1,0 +1,121 @@
+import { Link } from 'react-router-dom';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import PageHero from '@/components/PageHero';
+import Reveal from '@/components/Reveal';
+import CtaBanner from '@/components/CtaBanner';
+import { services } from '@/data/services';
+import { useDocumentTitle } from '@/hooks/useDocumentTitle';
+
+export default function Services() {
+  useDocumentTitle('Services');
+
+  return (
+    <>
+      <PageHero
+        eyebrow="Services"
+        title="Our Services"
+        subtitle="HVAC, ducting, cleaning, electrical, AC and plumbing — everything your new home or office needs, delivered by one dependable team."
+      />
+
+      {/* Quick jump */}
+      <div className="sticky top-20 z-30 border-b border-slate-200 bg-white/90 backdrop-blur-lg">
+        <div className="container-x flex gap-2 overflow-x-auto py-3 [scrollbar-width:none]">
+          {services.map((s) => (
+            <a
+              key={s.slug}
+              href={`#${s.slug}`}
+              className="shrink-0 rounded-full border border-slate-200 px-4 py-1.5 text-sm font-medium whitespace-nowrap text-navy-800 transition hover:border-brand-500 hover:text-brand-600"
+            >
+              {s.title}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <section className="section">
+        <div className="container-x space-y-20 lg:space-y-28">
+          {services.map((s, i) => {
+            const Icon = s.icon;
+            const reversed = i % 2 === 1;
+            return (
+              <article key={s.slug} id={s.slug} className="scroll-mt-40">
+                <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+                  {/* Visual */}
+                  <Reveal className={reversed ? 'lg:order-2' : ''}>
+                    <div className="group relative">
+                      <div
+                        className={`absolute -inset-3 rounded-3xl bg-brand-100/70 transition duration-500 group-hover:bg-brand-200/80 ${
+                          reversed ? '-rotate-2' : 'rotate-2'
+                        }`}
+                      />
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-navy-900/10 bg-navy-900 shadow-2xl">
+                        {s.image ? (
+                          <>
+                            <img
+                              src={s.image}
+                              alt={`${s.title} mechanics at work`}
+                              loading="lazy"
+                              className="size-full object-cover transition duration-700 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/20 to-transparent" />
+                          </>
+                        ) : (
+                          <div className="relative grid size-full place-items-center bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950">
+                            <div className="absolute inset-0 bg-grid" />
+                            <div className="absolute -right-16 -bottom-16 size-72 rounded-full bg-brand-500/25 blur-3xl" />
+                            <div className="relative grid size-32 place-items-center rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur">
+                              <Icon className="size-16 text-brand-400" strokeWidth={1.4} />
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Badges & Numbering */}
+                        <div className="absolute top-5 left-5 flex items-center gap-2">
+                          <span className="grid size-10 place-items-center rounded-xl border border-white/20 bg-navy-900/80 text-brand-400 shadow-md backdrop-blur-md">
+                            <Icon className="size-5" />
+                          </span>
+                          {s.badge && (
+                            <span className="rounded-full border border-white/20 bg-white/90 px-3 py-1 text-xs font-semibold text-navy-900 shadow-sm backdrop-blur-md">
+                              {s.badge}
+                            </span>
+                          )}
+                        </div>
+
+                        <span className="absolute right-5 bottom-4 text-5xl font-extrabold text-white/30 backdrop-blur-[2px]">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                      </div>
+                    </div>
+                  </Reveal>
+
+                  {/* Content */}
+                  <Reveal delay={100}>
+                    <span className="eyebrow">Service {String(i + 1).padStart(2, '0')}</span>
+                    <h2 className="mt-4 text-3xl sm:text-4xl">{s.title}</h2>
+                    <p className="mt-5 text-lg leading-relaxed">{s.description}</p>
+                    <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+                      {s.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2.5 text-[15px] font-medium text-navy-800">
+                          <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-brand-500" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Link
+                      to={`/contact?service=${encodeURIComponent(s.title)}`}
+                      className="btn btn-primary mt-9"
+                    >
+                      Request this service <ArrowRight className="size-4" />
+                    </Link>
+                  </Reveal>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <CtaBanner />
+    </>
+  );
+}
