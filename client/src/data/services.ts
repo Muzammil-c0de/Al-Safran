@@ -9,6 +9,7 @@ export const services: Service[] = [
     description:
       'Complete installation, commissioning and maintenance of chilled water Fan Coil Units and Air Handling Units — keeping your building cool, efficient and quiet all year round.',
     icon: Fan,
+    image: '/images/FCU.png',
     features: [
       'Supply & installation of FCUs and AHUs',
       'Chilled water piping, valves & insulation',

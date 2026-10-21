@@ -7,6 +7,8 @@ export interface Service {
   description: string;
   icon: LucideIcon;
   features: string[];
+  /** Optional photo from /public, e.g. '/images/FCU.png' */
+  image?: string;
 }
 
 export interface Project {

@@ -46,6 +46,14 @@ export default function Services() {
                       <div
                         className={`absolute -inset-3 rounded-3xl bg-brand-100 ${reversed ? '-rotate-2' : 'rotate-2'}`}
                       />
+                      {s.image ? (
+                        <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-navy-900 shadow-xl">
+                          <img src={s.image} alt={s.title} loading="lazy" className="size-full object-cover" />
+                          <span className="absolute top-5 left-5 grid size-12 place-items-center rounded-xl bg-white/95 text-brand-600 shadow-md">
+                            <Icon className="size-6" />
+                          </span>
+                        </div>
+                      ) : (
                       <div className="relative grid aspect-[4/3] place-items-center overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950">
                         <div className="absolute inset-0 bg-grid" />
                         <div className="absolute -right-16 -bottom-16 size-72 rounded-full bg-brand-500/25 blur-3xl" />
@@ -56,6 +64,7 @@ export default function Services() {
                           {String(i + 1).padStart(2, '0')}
                         </span>
                       </div>
+                      )}
                     </div>
                   </Reveal>
 
