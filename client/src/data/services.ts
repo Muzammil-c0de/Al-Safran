@@ -41,6 +41,7 @@ export const services: Service[] = [
     description:
       'We manufacture and install G.I. ducts on site to suit each HVAC system, using G.I. sheets in different thicknesses with different types of insulation — and fabricate ducts on site from 20 mm pre-insulated panels.',
     icon: Layers,
+    image: '/images/gi%20duct%20and%20pi%20duct.png',
     features: [
       'G.I. ducts made to the size of your HVAC system',
       'G.I. sheets in different thicknesses',
@@ -56,6 +57,7 @@ export const services: Service[] = [
     description:
       'Dust, mould and bacteria build up inside ductwork over time. Our cleaning service restores airflow and indoor air quality with minimal disruption to your home or office.',
     icon: Sparkles,
+    image: '/images/duct%20and%20defuser%20cleaning.png',
     features: [
       'Mechanical brushing & HEPA vacuuming',
       'Diffuser & grille removal and washing',
@@ -71,6 +73,7 @@ export const services: Service[] = [
     description:
       'Safe, neat and code-compliant electrical installations for new homes and offices — from conduiting and wiring through to final testing and handover.',
     icon: Zap,
+    image: '/images/electrical%20work.png',
     features: [
       'Conduiting & wiring for new projects',
       'Distribution boards, breakers & panels',
@@ -86,6 +89,7 @@ export const services: Service[] = [
     description:
       'Our technical team is experienced in all types of air-conditioning. We install systems for new construction, renovation and modification projects, and our Service department maintains residential and commercial equipment year-round.',
     icon: AirVent,
+    image: '/images/ac%20work.png',
     features: [
       'All types of air-conditioning systems',
       'New construction & renovation installations',
@@ -101,6 +105,7 @@ export const services: Service[] = [
     description:
       'Reliable water supply and drainage systems for new builds and renovations, installed cleanly and pressure-tested before handover.',
     icon: Droplets,
+    image: '/images/plumbing.png',
     features: [
       'Water supply piping (PPR / CPVC)',
       'Drainage & sewage lines',

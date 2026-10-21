@@ -5,6 +5,8 @@ import { site } from '@/data/site';
 
 interface Slide {
   image: string;
+  /** Portrait version used on phones and tablets (below 1024px) */
+  mobileImage: string;
   alt: string;
   eyebrow: string;
   title: { text: string; highlight?: boolean }[];
@@ -15,6 +17,7 @@ interface Slide {
 const slides: Slide[] = [
   {
     image: '/banner1.png',
+    mobileImage: '/banner1mobile.png',
     alt: 'Al Safran technicians servicing rooftop chilled water and HVAC equipment',
     eyebrow: site.slogan,
     title: [
@@ -28,6 +31,7 @@ const slides: Slide[] = [
   },
   {
     image: '/banner2.png',
+    mobileImage: '/banner2mobile.png',
     alt: 'Al Safran team installing GI ductwork and ceiling diffusers',
     eyebrow: 'Ducting Specialists',
     title: [
@@ -68,38 +72,45 @@ export default function HeroSlider() {
           return (
             <div
               key={s.image}
-              className="relative flex w-full shrink-0 lg:aspect-[5/2] lg:min-h-[560px]"
+              className="relative flex w-full shrink-0 aspect-[941/1672] max-h-[820px] lg:aspect-[5/2] lg:max-h-none lg:min-h-[560px]"
               aria-hidden={!active}
               aria-roledescription="slide"
               aria-label={`${idx + 1} of ${count}`}
             >
-              {/* Banner images are 5:2 — on wide screens the banner uses the same ratio so the full image shows */}
-              <img
-                src={s.image}
-                alt={s.alt}
-                fetchPriority={idx === 0 ? 'high' : 'auto'}
-                className="absolute inset-0 size-full object-cover object-[70%_center] lg:object-center"
-              />
+              {/* Portrait image on phones/tablets, wide 5:2 image on desktop — each slide uses its image's own ratio */}
+              <picture>
+                <source media="(min-width: 1024px)" srcSet={s.image} />
+                <img
+                  src={s.mobileImage}
+                  alt={s.alt}
+                  fetchPriority={idx === 0 ? 'high' : 'auto'}
+                  className="absolute inset-0 size-full object-cover object-bottom lg:object-center"
+                />
+              </picture>
+              {/* Mobile only: dark fade at the top so the white text is readable */}
+              <div className="absolute inset-x-0 top-0 h-[65%] bg-gradient-to-b from-navy-950/85 via-navy-950/45 to-transparent lg:hidden" />
 
-              <div className="container-x relative flex min-h-[600px] items-center pt-24 pb-16 lg:min-h-0">
+              <div className="container-x relative flex items-start pt-10 pb-16 sm:pt-14 lg:items-center lg:pt-24">
                 <div className={`max-w-[32rem] ${active ? 'animate-fade-up' : 'opacity-0'}`}>
                   <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-1.5 text-xs font-bold tracking-wide text-brand-600 shadow-sm ring-1 ring-brand-100">
                     <span className="size-2 animate-pulse rounded-full bg-brand-500" />
                     {s.eyebrow}
                   </span>
-                  <Heading className="mt-6 text-[2.1rem] leading-[1.15] text-navy-950 sm:text-[2.5rem] lg:text-[2.9rem]">
+                  <Heading className="mt-5 text-[1.9rem] leading-[1.15] text-white sm:text-[2.5rem] lg:mt-6 lg:text-[2.9rem] lg:text-navy-950">
                     {s.title.map((part, i) => (
-                      <span key={i} className={part.highlight ? 'text-brand-500' : undefined}>
+                      <span key={i} className={part.highlight ? 'text-brand-300 lg:text-brand-500' : undefined}>
                         {part.text}
                       </span>
                     ))}
                   </Heading>
-                  <p className="mt-6 max-w-md text-base leading-[1.75] font-semibold text-navy-950">{s.text}</p>
-                  <div className="mt-10 flex flex-wrap gap-4">
+                  <p className="mt-4 max-w-md text-[15px] leading-[1.7] font-medium text-white/90 lg:mt-6 lg:text-base lg:font-semibold lg:text-navy-950">
+                    {s.text}
+                  </p>
+                  <div className="mt-7 flex flex-wrap gap-3 lg:mt-10 lg:gap-4">
                     <Link to="/contact" className="btn btn-primary" tabIndex={active ? 0 : -1}>
                       Get a Free Quote <ArrowRight className="size-4" />
                     </Link>
-                    <Link to={s.secondary.to} className="btn btn-outline bg-white/80" tabIndex={active ? 0 : -1}>
+                    <Link to={s.secondary.to} className="btn border border-white/70 text-white hover:bg-white hover:text-navy-900 lg:border-navy-200 lg:bg-white/80 lg:text-navy-900 lg:hover:bg-navy-900 lg:hover:text-white" tabIndex={active ? 0 : -1}>
                       {s.secondary.label}
                     </Link>
                   </div>

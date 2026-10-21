@@ -31,8 +31,10 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`top-0 z-50 border-b transition-all duration-300 ${isHome ? 'fixed inset-x-0' : 'sticky'} ${
-          solid ? 'border-slate-200 bg-white/90 shadow-sm backdrop-blur-lg' : 'border-transparent bg-transparent'
+        className={`sticky top-0 z-50 border-b transition-all duration-300 ${isHome ? 'lg:fixed lg:inset-x-0' : ''} ${
+          solid
+            ? 'border-slate-200 bg-white/90 shadow-sm backdrop-blur-lg'
+            : 'border-slate-200 bg-white lg:border-transparent lg:bg-transparent'
         }`}
       >
         <nav className="container-x flex h-20 items-center justify-between gap-6" aria-label="Main">
