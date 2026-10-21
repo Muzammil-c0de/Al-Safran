@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { CheckCircle2, Clock, Loader2, Mail, MapPin, Phone, Send } from 'lucide-react';
+import { CheckCircle2, Clock, Loader2, Mail, MapPin, Phone, Send, Smartphone } from 'lucide-react';
 import PageHero from '@/components/PageHero';
 import { services } from '@/data/services';
 import { site } from '@/data/site';
@@ -66,11 +66,12 @@ export default function Contact() {
     }
   };
 
-  const contactItems = [
-    { icon: Phone, label: 'Call us', value: site.phone, href: site.phoneHref },
+  const contactItems: { icon: typeof Phone; label: string; value: string; href?: string }[] = [
+    { icon: Phone, label: 'Office telephone', value: site.phone, href: site.phoneHref },
+    ...site.mobiles.map((m) => ({ icon: Smartphone, label: 'Mobile', value: m.label, href: m.href })),
     { icon: Mail, label: 'Email us', value: site.email, href: `mailto:${site.email}` },
-    { icon: MapPin, label: 'Visit us', value: site.address },
-    { icon: Clock, label: 'Working hours', value: site.hours },
+    { icon: MapPin, label: 'Address', value: site.address },
+    { icon: Clock, label: 'Service', value: site.hours },
   ];
 
   return (

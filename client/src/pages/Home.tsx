@@ -10,6 +10,7 @@ import {
   Timer,
   Wrench,
 } from 'lucide-react';
+import HeroSlider from '@/components/HeroSlider';
 import Reveal from '@/components/Reveal';
 import SectionHeading from '@/components/SectionHeading';
 import ServiceCard from '@/components/ServiceCard';
@@ -23,23 +24,23 @@ import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 const reasons = [
   {
     icon: HardHat,
-    title: 'Skilled, experienced team',
-    text: 'Trained technicians for HVAC, ducting, electrical and plumbing — one team for the whole job.',
+    title: 'Since 1985',
+    text: 'Decades of air-conditioning and ducting experience across the U.A.E. — residential and commercial.',
   },
   {
     icon: ShieldCheck,
-    title: 'Safety & quality first',
-    text: 'Work done to site standards, with proper materials, testing and a clean handover.',
+    title: 'Quality materials',
+    text: 'High-quality products, specially selected for each purpose, for long life and trouble-free operation.',
   },
   {
     icon: Timer,
-    title: 'On-time delivery',
-    text: 'Clear schedules and daily coordination so your project finishes when promised.',
+    title: 'Completed on time',
+    text: 'Small or large, we complete projects on time — which is why our clients keep coming back.',
   },
   {
     icon: BadgeCheck,
-    title: 'Transparent pricing',
-    text: 'Detailed quotations with no hidden costs — you know exactly what you are paying for.',
+    title: 'Reliable after-sales service',
+    text: 'Maintenance contracts and per-call repairs year-round from our dedicated Service department.',
   },
 ];
 
@@ -56,60 +57,19 @@ export default function Home() {
 
   return (
     <>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-white">
-        {/* Banner image */}
-        <img
-          src="/FMU%20installation%20banner1.png"
-          alt="Al Safran technicians servicing rooftop chilled water and HVAC equipment"
-          className="absolute inset-0 size-full object-cover object-[70%_center]"
-          fetchPriority="high"
-        />
-        {/* Soft white fade on the left (over the sky) so the text stays crisp */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/40 to-transparent max-md:from-white/85 max-md:via-white/70" />
+      {/* HERO SLIDER */}
+      <HeroSlider />
 
-        <div className="container-x relative flex h-[460px] items-center sm:h-[480px] lg:h-[520px]">
-          <div className="max-w-xl">
-            <span className="inline-flex animate-fade-up items-center gap-2 rounded-full bg-white/90 px-4 py-1.5 text-xs font-bold tracking-wide text-brand-600 shadow-sm">
-              <span className="size-2 animate-pulse rounded-full bg-brand-500" />
-              {site.slogan}
-            </span>
-            <h1
-              className="mt-5 animate-fade-up text-4xl leading-[1.1] text-navy-950 sm:text-5xl lg:text-[3.4rem]"
-              style={{ animationDelay: '80ms' }}
-            >
-              Cooling systems built to <span className="text-brand-500">perform</span>, maintained to{' '}
-              <span className="text-brand-500">last</span>
-            </h1>
-            <p
-              className="mt-5 max-w-lg animate-fade-up text-base leading-relaxed font-medium text-slate-700 sm:text-lg"
-              style={{ animationDelay: '160ms' }}
-            >
-              Chilled water FCU/AHU, GI &amp; PI ductwork, duct cleaning, AC, electrical and plumbing works for new homes
-              and offices.
-            </p>
-            <div className="mt-8 flex animate-fade-up flex-wrap gap-3" style={{ animationDelay: '240ms' }}>
-              <Link to="/contact" className="btn btn-primary">
-                Get a Free Quote <ArrowRight className="size-4" />
-              </Link>
-              <Link to="/services" className="btn btn-outline bg-white/80">
-                Explore Services
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats */}
+      {/* Stats — below the banner, centred */}
       <section className="border-b border-slate-200 bg-white">
-        <div className="container-x grid grid-cols-2 gap-6 py-8 lg:grid-cols-4">
+        <dl className="container-x mx-auto grid max-w-5xl grid-cols-2 gap-y-8 py-12 text-center md:grid-cols-4 md:divide-x md:divide-slate-200">
           {site.stats.map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="text-3xl font-extrabold text-brand-600 sm:text-4xl">{s.value}</p>
-              <p className="mt-1 text-sm font-medium text-slate-600">{s.label}</p>
+            <div key={s.label} className="px-4">
+              <dt className="text-4xl font-extrabold text-brand-600 sm:text-5xl">{s.value}</dt>
+              <dd className="mt-2 text-sm font-semibold text-navy-900">{s.label}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
 
       {/* SERVICES */}
@@ -153,8 +113,8 @@ export default function Home() {
             <SectionHeading
               align="left"
               eyebrow="Why Al Safran"
-              title="Work done properly — the first time"
-              subtitle="We combine HVAC, ducting, electrical and plumbing expertise in a single accountable team, so your project runs smoothly from inspection to handover."
+              title="One of the leading air-conditioning contractors in the U.A.E."
+              subtitle="Professional advice, appropriate design, quality workmanship and reliable after-sales service — delivered by skilled technicians working as one company and one team."
             />
             <Link to="/about" className="btn btn-dark mt-8">
               More About Us <ArrowRight className="size-4" />

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Clock, Mail, MapPin, Phone } from 'lucide-react';
+import { ArrowUpRight, Clock, Mail, MapPin, Phone, Smartphone } from 'lucide-react';
 import Logo from './Logo';
 import { navLinks, site } from '@/data/site';
 import { services } from '@/data/services';
@@ -50,6 +50,19 @@ export default function Footer() {
               </a>
             </li>
             <li className="flex gap-3">
+              <Smartphone className="mt-0.5 size-4 shrink-0 text-brand-400" />
+              <span>
+                {site.mobiles.map((m, i) => (
+                  <span key={m.href}>
+                    {i > 0 && ' / '}
+                    <a href={m.href} className="transition hover:text-white">
+                      {m.label}
+                    </a>
+                  </span>
+                ))}
+              </span>
+            </li>
+            <li className="flex gap-3">
               <Mail className="mt-0.5 size-4 shrink-0 text-brand-400" />
               <a href={`mailto:${site.email}`} className="break-all transition hover:text-white">
                 {site.email}
@@ -76,7 +89,7 @@ export default function Footer() {
       <div className="relative border-t border-white/10">
         <div className="container-x flex flex-col items-center justify-between gap-2 py-6 text-xs text-navy-300 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} {site.name}. All rights reserved.
+            © {new Date().getFullYear()} {site.legalName}. All rights reserved.
           </p>
           <p>Chilled Water • Ducting • Electrical • AC • Plumbing</p>
         </div>

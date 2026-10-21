@@ -1,20 +1,23 @@
-/**
- * Company details used across the whole website.
- * TODO: replace the placeholder values below with Al Safran's real details.
- */
+/** Company details used across the whole website. */
 export const site = {
   name: 'Al Safran',
+  legalName: 'Al Safran Technical Services',
   tagline: 'Air-Conditioning',
   slogan: 'Be Cool with Al Safran',
+  since: 1985,
   description:
-    'Al Safran delivers chilled water FCU/AHU systems, ducting, duct cleaning, electrical, AC and plumbing works for new homes and offices — installed right, maintained properly.',
+    'Al Safran Technical Services — contracting, installation and maintenance of air-conditioning systems in the U.A.E. since 1985.',
 
-  phone: '+000 00 000 0000', // TODO
-  phoneHref: 'tel:+00000000000', // TODO
-  whatsapp: '', // TODO e.g. '971500000000' (digits only) — leave empty to hide
-  email: 'info@example.com', // TODO
-  address: 'Office address, City, Country', // TODO
-  hours: 'Saturday – Thursday, 8:00 AM – 6:00 PM', // TODO
+  phone: '04-236 7095',
+  phoneHref: 'tel:+97142367095',
+  mobiles: [
+    { label: '055-890 8664', href: 'tel:+971558908664' },
+    { label: '050-676 1036', href: 'tel:+971506761036' },
+  ],
+  whatsapp: '', // e.g. '971558908664' (digits only) to show a WhatsApp button — leave empty to hide
+  email: 'mail2alsafran@gmail.com',
+  address: 'P.O. Box 76368, Dubai, U.A.E.',
+  hours: 'Service calls attended year-round',
 
   /** Google Maps "Embed a map" src URL. Leave empty to hide the map. */
   mapEmbedUrl: '',
@@ -22,12 +25,11 @@ export const site = {
   /** Set to false if your logo image already contains the company name. */
   showNameNextToLogo: true,
 
-  /** TODO: replace with your real numbers. */
   stats: [
-    { value: '10+', label: 'Years of experience' },
-    { value: '250+', label: 'Projects completed' },
-    { value: '7', label: 'Core services' },
-    { value: '24/7', label: 'Maintenance support' },
+    { value: '1985', label: 'Established in the U.A.E.' },
+    { value: `${new Date().getFullYear() - 1985}+`, label: 'Years of experience' },
+    { value: '2', label: 'Divisions — Mechanical & Ducting' },
+    { value: '3', label: 'Departments — Commercial, Residential & Service' },
   ],
 };
 

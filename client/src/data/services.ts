@@ -22,14 +22,14 @@ export const services: Service[] = [
     title: 'Ducting Installation & Maintenance',
     short: 'All types of ducting installation and maintenance works.',
     description:
-      'From new installations to modifications during fit-outs, we design, install and maintain ductwork that moves air efficiently and meets site standards.',
+      'Our Ducting division provides complete ducting works for HVAC systems — designing and installing all types of new ducts, and maintaining and repairing existing ducts to rectify air leakage problems.',
     icon: Wind,
     features: [
-      'Supply, return, fresh air & exhaust ducts',
-      'Kitchen exhaust & ventilation ducts',
-      'Duct modification & re-routing for fit-outs',
-      'Leak sealing & insulation repair',
-      'Dampers, grilles & diffusers fixing',
+      'Duct sizes designed to suit A/C unit capacity',
+      'Ducting layouts prepared for authority approval',
+      'Installation of all types of new ducts',
+      'Repair of existing ducts to fix air leakage',
+      'Diffusers supplied & installed in all sizes',
     ],
   },
   {
@@ -37,14 +37,14 @@ export const services: Service[] = [
     title: 'GI Duct & PI Duct Works',
     short: 'Galvanized iron (GI) and pre-insulated (PI) duct fabrication and installation.',
     description:
-      'Fabrication and installation of durable galvanized iron ducts and lightweight pre-insulated panel ducts, built to the right gauge and sealed for long-term performance.',
+      'We manufacture and install G.I. ducts on site to suit each HVAC system, using G.I. sheets in different thicknesses with different types of insulation — and fabricate ducts on site from 20 mm pre-insulated panels.',
     icon: Layers,
     features: [
-      'GI duct fabrication & installation',
-      'Pre-insulated (PI) panel ducts',
-      'Thermal & acoustic insulation',
-      'Hangers, supports & proper sealing',
-      'Site measurement & shop drawings',
+      'G.I. ducts made to the size of your HVAC system',
+      'G.I. sheets in different thicknesses',
+      'Different types of duct insulation',
+      'Pre-insulated ducts from 20 mm panels',
+      'Locally designed & manufactured diffusers',
     ],
   },
   {
@@ -82,14 +82,14 @@ export const services: Service[] = [
     title: 'AC Works',
     short: 'AC works for new home and office projects.',
     description:
-      'Selection, installation and servicing of air-conditioning systems sized correctly for your space — so you get comfort without wasting energy.',
+      'Our technical team is experienced in all types of air-conditioning. We install systems for new construction, renovation and modification projects, and our Service department maintains residential and commercial equipment year-round.',
     icon: AirVent,
     features: [
-      'Split, ducted split & package units',
-      'Copper piping & condensate drain lines',
-      'Gas charging & leak repair',
-      'Routine servicing & AMC contracts',
-      'Load calculation & unit sizing',
+      'All types of air-conditioning systems',
+      'New construction & renovation installations',
+      'Residential & commercial maintenance contracts',
+      'Daily repairs on a per-call basis, year-round',
+      'Professional advice & appropriate design',
     ],
   },
   {
