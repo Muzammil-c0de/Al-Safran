@@ -25,6 +25,7 @@ export const services: Service[] = [
     description:
       'Our Ducting division provides complete ducting works for HVAC systems — designing and installing all types of new ducts, and maintaining and repairing existing ducts to rectify air leakage problems.',
     icon: Wind,
+    image: '/images/ducting.png',
     features: [
       'Duct sizes designed to suit A/C unit capacity',
       'Ducting layouts prepared for authority approval',

@@ -49,9 +49,6 @@ export default function Services() {
                       {s.image ? (
                         <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-navy-900 shadow-xl">
                           <img src={s.image} alt={s.title} loading="lazy" className="size-full object-cover" />
-                          <span className="absolute top-5 left-5 grid size-12 place-items-center rounded-xl bg-white/95 text-brand-600 shadow-md">
-                            <Icon className="size-6" />
-                          </span>
                         </div>
                       ) : (
                       <div className="relative grid aspect-[4/3] place-items-center overflow-hidden rounded-3xl bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950">
