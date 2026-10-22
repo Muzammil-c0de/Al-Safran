@@ -26,8 +26,9 @@ export default function Projects() {
     <>
       <PageHero
         eyebrow="Projects"
-        title="Our Projects"
-        subtitle="A look at some of the HVAC, ducting, electrical and plumbing projects we've delivered for homes and businesses."
+        title="Projects Built to Perform"
+        subtitle="Air-conditioning, ducting and MEP works delivered across the U.A.E. — on time and to standard."
+        image="/project banner.png"
       />
 
       <section className="section">

@@ -13,8 +13,19 @@ export default function Services() {
     <>
       <PageHero
         eyebrow="Services"
-        title="Our Services"
-        subtitle="HVAC, ducting, cleaning, electrical, AC and plumbing — everything your new home or office needs, delivered by one dependable team."
+        title="Complete HVAC & MEP Solutions"
+        subtitle="Chilled water FCU/AHU, GI & PI ducting, duct cleaning, AC, electrical and plumbing — delivered by one dependable team."
+        image="/ourservice banner.png"
+        // Service names under the 7 icons in the banner image (positions match the icons)
+        labels={[
+          { x: 11.65, y: 88.5, text: 'AC Installation & Maintenance', href: '#ac-works' },
+          { x: 24.65, y: 88.5, text: 'GI & PI Ducting Works', href: '#gi-pi-duct' },
+          { x: 37.4, y: 88.5, text: 'Duct & Diffuser Cleaning', href: '#duct-cleaning' },
+          { x: 50, y: 88.5, text: 'FCU & AHU Systems', href: '#chilled-water-fcu-ahu' },
+          { x: 62.65, y: 88.5, text: 'HVAC Maintenance', href: '#ducting' },
+          { x: 75.35, y: 88.5, text: 'Electrical Works', href: '#electrical' },
+          { x: 88.25, y: 88.5, text: 'Plumbing Works', href: '#plumbing' },
+        ]}
       />
 
       {/* Quick jump */}

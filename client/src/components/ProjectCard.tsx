@@ -34,10 +34,13 @@ export default function ProjectCard({ project }: { project: Project }) {
         <span className="absolute top-4 left-4 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-navy-900 shadow-sm backdrop-blur">
           {project.category}
         </span>
+        {/* Project name on the photo */}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-950/90 via-navy-950/50 to-transparent px-5 pt-14 pb-4">
+          <h3 className="text-xl leading-snug text-white drop-shadow">{project.title}</h3>
+        </div>
       </div>
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="text-lg leading-snug">{project.title}</h3>
-        {project.description && <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed">{project.description}</p>}
+        {project.description && <p className="line-clamp-3 flex-1 text-sm leading-relaxed">{project.description}</p>}
         {(project.location || year) && (
           <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 text-xs font-medium text-slate-500">
             {project.location && (

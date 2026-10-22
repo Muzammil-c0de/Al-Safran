@@ -78,8 +78,10 @@ export default function Contact() {
     <>
       <PageHero
         eyebrow="Contact"
-        title="Let's talk about your project"
+        title="Let's Talk About Your Project"
         subtitle="Request a quotation, book a site inspection or ask about maintenance — we usually reply within one working day."
+        image="/contact banner.png"
+        textPosition="bottom-left"
       />
 
       <section className="section">

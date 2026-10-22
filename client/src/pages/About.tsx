@@ -77,8 +77,9 @@ export default function About() {
     <>
       <PageHero
         eyebrow="About Us"
-        title={`Keeping the U.A.E. cool since ${site.since}`}
-        subtitle={`${site.legalName} is one of the leading air-conditioning contractors in the U.A.E. — contracting, installation and maintenance of air-conditioning systems for over ${years} years.`}
+        title={`Keeping the U.A.E. Cool Since ${site.since}`}
+        subtitle={`${site.legalName} — trusted air-conditioning contractors delivering quality workmanship for over ${years} years.`}
+        image="/about us banner.png"
       />
 
       {/* Story */}
