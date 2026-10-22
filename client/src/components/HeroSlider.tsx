@@ -90,13 +90,14 @@ export default function HeroSlider() {
               {/* Mobile only: dark fade at the top so the white text is readable */}
               <div className="absolute inset-x-0 top-0 h-[65%] bg-gradient-to-b from-navy-950/85 via-navy-950/45 to-transparent lg:hidden" />
 
-              <div className="container-x relative flex items-start pt-10 pb-16 sm:pt-14 lg:items-center lg:pt-24">
+              <div className="container-x relative flex items-start pt-28 pb-16 sm:pt-32 lg:items-center lg:pt-24">
                 <div className={`max-w-[32rem] ${active ? 'animate-fade-up' : 'opacity-0'}`}>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-1.5 text-xs font-bold tracking-wide text-brand-600 shadow-sm ring-1 ring-brand-100">
-                    <span className="size-2 animate-pulse rounded-full bg-brand-500" />
+                  {/* Tag — desktop position (above the heading) */}
+                  <span className="glass-tag px-4 py-1.5 text-xs text-navy-900 max-lg:hidden">
+                    <span className="relative size-2 animate-pulse rounded-full bg-brand-500" />
                     {s.eyebrow}
                   </span>
-                  <Heading className="mt-5 text-[1.9rem] leading-[1.15] text-white sm:text-[2.5rem] lg:mt-6 lg:text-[2.9rem] lg:text-navy-950">
+                  <Heading className="text-[1.9rem] leading-[1.15] text-white sm:text-[2.5rem] lg:mt-6 lg:text-[2.9rem] lg:text-navy-950">
                     {s.title.map((part, i) => (
                       <span key={i} className={part.highlight ? 'text-brand-300 lg:text-brand-500' : undefined}>
                         {part.text}
@@ -106,7 +107,8 @@ export default function HeroSlider() {
                   <p className="mt-4 max-w-md text-[15px] leading-[1.7] font-medium text-white/90 lg:mt-6 lg:text-base lg:font-semibold lg:text-navy-950">
                     {s.text}
                   </p>
-                  <div className="mt-7 flex flex-wrap gap-3 lg:mt-10 lg:gap-4">
+                  {/* Buttons on desktop only */}
+                  <div className="mt-10 hidden flex-wrap gap-4 lg:flex">
                     <Link to="/contact" className="btn btn-primary" tabIndex={active ? 0 : -1}>
                       Get a Free Quote <ArrowRight className="size-4" />
                     </Link>
@@ -115,6 +117,18 @@ export default function HeroSlider() {
                     </Link>
                   </div>
                 </div>
+              </div>
+
+              {/* Tag — mobile position (bottom of the banner, just above the slide dots) */}
+              <div className="absolute inset-x-0 bottom-12 flex justify-center lg:hidden">
+                <span
+                  className={`glass-tag px-5 py-2 text-sm text-white [text-shadow:0_1px_6px_rgb(14_21_70/0.45)] ${
+                    active ? 'animate-fade-up' : 'opacity-0'
+                  }`}
+                >
+                  <span className="relative size-2 animate-pulse rounded-full bg-ice-300 shadow-[0_0_8px_rgb(127_232_245)]" />
+                  {s.eyebrow}
+                </span>
               </div>
             </div>
           );

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Menu, Phone, X } from 'lucide-react';
+import { Mail, Menu, Phone, X } from 'lucide-react';
 import Logo from './Logo';
 import { navLinks, site } from '@/data/site';
 
@@ -9,8 +9,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
   const isHome = pathname === '/';
-  // Transparent over the home banner; solid white once scrolled, on other pages, or with the mobile menu open.
-  const solid = scrolled || !isHome || open;
+  // Transparent over the home banner (phones and desktop); solid white once scrolled or on other pages.
+  const solid = scrolled || !isHome;
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -31,14 +31,15 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 border-b transition-all duration-300 ${isHome ? 'lg:fixed lg:inset-x-0' : ''} ${
+        className={`top-0 z-50 border-b transition-all duration-300 ${isHome ? 'fixed inset-x-0' : 'sticky'} ${
           solid
-            ? 'border-slate-200 bg-white/90 shadow-sm backdrop-blur-lg'
-            : 'border-slate-200 bg-white lg:border-transparent lg:bg-transparent'
+            ? // Liquid glass: see-through white, heavy blur + colour boost, bright top edge and soft shadow
+              'border-white/50 bg-gradient-to-b from-white/70 to-white/45 shadow-[0_8px_32px_rgba(14,21,70,0.12),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(255,255,255,0.35)] backdrop-blur-2xl backdrop-saturate-[1.8]'
+            : 'border-transparent bg-transparent'
         }`}
       >
-        <nav className="container-x flex h-20 items-center justify-between gap-6" aria-label="Main">
-          <Logo />
+        <nav className="container-x flex h-20 items-center justify-between gap-4" aria-label="Main">
+          <Logo variant={solid ? 'dark' : 'mobile-light'} />
 
           <ul className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => (
@@ -75,50 +76,81 @@ export default function Navbar() {
 
           <button
             type="button"
-            className="grid size-11 place-items-center rounded-xl border border-slate-200 text-navy-900 lg:hidden"
-            onClick={() => setOpen((v) => !v)}
+            className={`grid size-11 shrink-0 place-items-center rounded-xl border transition lg:hidden ${
+              solid ? 'border-slate-200 text-navy-900' : 'border-white/40 bg-white/10 text-white backdrop-blur'
+            }`}
+            onClick={() => setOpen(true)}
             aria-expanded={open}
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-controls="mobile-menu"
+            aria-label="Open menu"
           >
-            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+            <Menu className="size-5" />
           </button>
         </nav>
-
-        {/* Mobile menu */}
-        <div
-          className={`fixed inset-x-0 top-20 bottom-0 bg-white transition-all duration-300 lg:hidden ${
-            open ? 'visible opacity-100' : 'invisible opacity-0'
-          }`}
-        >
-          <div className="container-x flex h-full flex-col overflow-y-auto pt-4 pb-8">
-            <ul className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <li key={link.to}>
-                  <NavLink
-                    to={link.to}
-                    end={link.to === '/'}
-                    className={({ isActive }) =>
-                      `block rounded-xl px-4 py-3.5 text-lg font-semibold ${
-                        isActive ? 'bg-brand-50 text-brand-600' : 'text-navy-900 hover:bg-slate-50'
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto space-y-3 pt-8">
-              <Link to="/contact" className="btn btn-primary w-full">
-                Get a Free Quote
-              </Link>
-              <a href={site.phoneHref} className="btn btn-outline w-full">
-                <Phone className="size-4" /> {site.phone}
-              </a>
-            </div>
-          </div>
-        </div>
       </header>
+
+      {/* Mobile menu — slides in from the left */}
+      {/* Visibility transitions too, so the panel stays visible until it has fully slid out */}
+      <div
+        className={`fixed inset-0 z-[60] transition-[visibility] duration-500 lg:hidden ${open ? 'visible' : 'invisible'}`}
+      >
+        <div
+          className={`absolute inset-0 bg-navy-950/50 transition-opacity duration-500 ${
+            open ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+        <aside
+          id="mobile-menu"
+          className={`absolute inset-0 flex flex-col bg-white shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] ${
+            open ? 'translate-x-0' : '-translate-x-full'
+          }`}
+          aria-label="Mobile menu"
+        >
+          <div className="flex h-20 shrink-0 items-center justify-between border-b border-slate-100 px-4 sm:px-6">
+            <Logo onClick={() => setOpen(false)} />
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
+              className="grid size-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-navy-900"
+            >
+              <X className="size-5" />
+            </button>
+          </div>
+
+          <ul className="flex flex-col gap-1 overflow-y-auto p-4">
+            {navLinks.map((link) => (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  end={link.to === '/'}
+                  className={({ isActive }) =>
+                    `block rounded-xl px-4 py-3.5 text-[17px] font-semibold transition ${
+                      isActive ? 'bg-brand-50 text-brand-600' : 'text-navy-900 hover:bg-slate-50'
+                    }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-auto space-y-3 border-t border-slate-100 p-5">
+            <a href={site.phoneHref} className="flex items-center gap-3 text-sm font-semibold text-navy-900">
+              <Phone className="size-4 text-brand-500" /> {site.phone}
+            </a>
+            <a href={`mailto:${site.email}`} className="flex items-center gap-3 text-sm font-semibold break-all text-navy-900">
+              <Mail className="size-4 shrink-0 text-brand-500" /> {site.email}
+            </a>
+            <Link to="/contact" className="btn btn-primary mt-2 w-full">
+              Get a Free Quote
+            </Link>
+          </div>
+        </aside>
+      </div>
     </>
   );
 }

@@ -11,6 +11,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import HeroSlider from '@/components/HeroSlider';
+import CountUp from '@/components/CountUp';
 import Reveal from '@/components/Reveal';
 import SectionHeading from '@/components/SectionHeading';
 import ServiceCard from '@/components/ServiceCard';
@@ -62,11 +63,16 @@ export default function Home() {
 
       {/* Stats — below the banner, centred */}
       <section className="border-b border-slate-200 bg-white">
-        <dl className="container-x mx-auto grid max-w-5xl grid-cols-2 gap-y-8 py-12 text-center md:grid-cols-4 md:divide-x md:divide-slate-200">
+        <dl className="container-x mx-auto grid max-w-5xl grid-cols-4 divide-x divide-slate-200 py-8 text-center md:py-12">
           {site.stats.map((s) => (
-            <div key={s.label} className="px-4">
-              <dt className="text-4xl font-extrabold text-brand-600 sm:text-5xl">{s.value}</dt>
-              <dd className="mt-2 text-sm font-semibold text-navy-900">{s.label}</dd>
+            <div key={s.label} className="px-1 sm:px-4">
+              <dt className="text-2xl font-extrabold text-brand-600 tabular-nums sm:text-4xl md:text-5xl">
+                <CountUp value={s.value} />
+              </dt>
+              <dd className="mt-1 text-[11px] leading-tight font-semibold text-navy-900 sm:text-xs md:mt-2 md:text-sm">
+                <span className="md:hidden">{s.short}</span>
+                <span className="hidden md:inline">{s.label}</span>
+              </dd>
             </div>
           ))}
         </dl>

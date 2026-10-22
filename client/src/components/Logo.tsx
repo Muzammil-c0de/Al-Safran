@@ -3,14 +3,20 @@ import { Link } from 'react-router-dom';
 import { site } from '@/data/site';
 
 interface LogoProps {
-  variant?: 'dark' | 'light';
+  /** 'mobile-light': white name on phones (over the dark banner fade), dark on desktop. */
+  variant?: 'dark' | 'light' | 'mobile-light';
   onClick?: () => void;
 }
+
+const nameColor = {
+  dark: 'text-[#111]',
+  light: 'text-white',
+  'mobile-light': 'text-white lg:text-[#111]',
+};
 
 /** Shows /logo.png from the public folder, with a text mark fallback until it's added. */
 export default function Logo({ variant = 'dark', onClick }: LogoProps) {
   const [imgFailed, setImgFailed] = useState(false);
-  const light = variant === 'light';
 
   return (
     <Link to="/" onClick={onClick} className="flex shrink-0 items-center gap-3" aria-label={`${site.name} — Home`}>
@@ -28,9 +34,7 @@ export default function Logo({ variant = 'dark', onClick }: LogoProps) {
       )}
       {(site.showNameNextToLogo || imgFailed) && (
         <span
-          className={`font-brand text-[1.05rem] leading-none font-bold tracking-[0.08em] uppercase ${
-            light ? 'text-white' : 'text-[#111]'
-          }`}
+          className={`font-brand text-[1.05rem] leading-none font-bold tracking-[0.08em] whitespace-nowrap uppercase transition-colors ${nameColor[variant]}`}
         >
           {site.name}
         </span>

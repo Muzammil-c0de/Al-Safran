@@ -26,10 +26,11 @@ export const site = {
   showNameNextToLogo: true,
 
   stats: [
-    { value: '1985', label: 'Established in the U.A.E.' },
-    { value: `${new Date().getFullYear() - 1985}+`, label: 'Years of experience' },
-    { value: '2', label: 'Divisions — Mechanical & Ducting' },
-    { value: '3', label: 'Departments — Commercial, Residential & Service' },
+    // `short` is shown on phones, `label` on larger screens
+    { value: '1985', short: 'Established', label: 'Established in the U.A.E.' },
+    { value: `${new Date().getFullYear() - 1985}+`, short: 'Years', label: 'Years of experience' },
+    { value: '2', short: 'Divisions', label: 'Divisions — Mechanical & Ducting' },
+    { value: '3', short: 'Departments', label: 'Departments — Commercial, Residential & Service' },
   ],
 };
 

@@ -52,6 +52,11 @@
   html {
     scroll-behavior: smooth;
   }
+  /* Never let anything push the page sideways on phones */
+  html,
+  body {
+    overflow-x: clip;
+  }
   body {
     @apply bg-white font-sans text-slate-600 antialiased;
   }
@@ -96,6 +101,20 @@
   }
   .btn-outline-light {
     @apply border border-white/30 text-white hover:border-white hover:bg-white hover:text-navy-900;
+  }
+
+  /* Liquid-glass pill: frosted, see-through, bright edges */
+  .glass-tag {
+    @apply relative inline-flex items-center gap-2 overflow-hidden rounded-full border border-white/60 bg-gradient-to-br from-white/45 via-white/20 to-white/10 font-bold tracking-wide backdrop-blur-xl backdrop-saturate-[1.8];
+    box-shadow:
+      0 8px 24px rgb(14 21 70 / 0.18),
+      inset 0 1px 0 rgb(255 255 255 / 0.9),
+      inset 0 -1px 0 rgb(255 255 255 / 0.25);
+  }
+  /* Soft light sheen across the top half */
+  .glass-tag::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 -z-10 h-1/2 rounded-t-full bg-gradient-to-b from-white/50 to-transparent;
   }
 
   .card {
