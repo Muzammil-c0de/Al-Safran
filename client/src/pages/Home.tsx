@@ -69,7 +69,7 @@ export default function Home() {
           {site.stats.map((s) => (
             <div key={s.label} className="px-1 sm:px-4">
               <dt className="text-2xl font-extrabold text-brand-600 tabular-nums sm:text-4xl md:text-5xl">
-                <CountUp value={s.value} />
+                {'fixed' in s && s.fixed ? s.value : <CountUp value={s.value} />}
               </dt>
               <dd className="mt-1 text-[11px] leading-tight font-semibold text-navy-900 sm:text-xs md:mt-2 md:text-sm">
                 <span className="md:hidden">{s.short}</span>

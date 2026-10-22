@@ -28,22 +28,6 @@ export default function Services() {
         ]}
       />
 
-      {/* Quick jump */}
-      {/* Sticky on desktop only — on phones it scrolls away with the page */}
-      <div className="z-30 border-b border-slate-200 bg-white/90 backdrop-blur-lg lg:sticky lg:top-20">
-        {/* Right padding on phones keeps the chips clear of the fixed menu toggle */}
-        <div className="container-x flex gap-2 overflow-x-auto py-4 [scrollbar-width:none] max-lg:pr-20">
-          {services.map((s) => (
-            <a
-              key={s.slug}
-              href={`#${s.slug}`}
-              className="shrink-0 rounded-full border border-slate-200 px-4 py-1.5 text-sm font-medium whitespace-nowrap text-navy-800 transition hover:border-brand-500 hover:text-brand-600"
-            >
-              {s.title}
-            </a>
-          ))}
-        </div>
-      </div>
 
       <section className="section">
         <div className="container-x space-y-20 lg:space-y-28">

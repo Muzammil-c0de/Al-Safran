@@ -31,11 +31,11 @@ export const site = {
   showNameNextToLogo: true,
 
   stats: [
-    // `short` is shown on phones, `label` on larger screens
-    { value: '1985', short: 'Established', label: 'Established in the U.A.E.' },
-    { value: `${new Date().getFullYear() - 1985}+`, short: 'Years', label: 'Years of experience' },
-    { value: '2', short: 'Divisions', label: 'Divisions — Mechanical & Ducting' },
-    { value: '3', short: 'Departments', label: 'Departments — Commercial, Residential & Service' },
+    // `short` is shown on phones, `label` on larger screens; `fixed` = shown as-is (no count-up animation)
+    { value: '1985', short: 'Since', label: 'Since', fixed: true },
+    { value: `${new Date().getFullYear() - 1985}+`, short: 'Years', label: 'Years of experience', fixed: true },
+    { value: '1000+', short: 'Clients', label: 'Happy clients' },
+    { value: '5000+', short: 'Projects', label: 'Successful projects' },
   ],
 };
 

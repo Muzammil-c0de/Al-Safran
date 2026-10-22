@@ -8,9 +8,8 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
-  const isHome = pathname === '/';
-  // Desktop: transparent over the home banner; liquid glass once scrolled or on other pages.
-  const solid = scrolled || !isHome;
+  // Desktop: transparent over every page's banner; liquid glass once scrolled
+  const solid = scrolled;
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -56,7 +55,7 @@ export default function Navbar() {
       */}
       <header
         className={`absolute inset-x-0 top-0 z-50 border-b border-transparent transition-all duration-300 ${
-          isHome ? 'lg:fixed' : 'lg:sticky'
+          'lg:fixed'
         } ${
           solid
             ? // Liquid glass (desktop only): see-through white, heavy blur + colour boost, bright edges, soft shadow
@@ -66,7 +65,10 @@ export default function Navbar() {
       >
         <nav className="container-x flex h-20 items-center justify-between gap-4" aria-label="Main">
           {/* White on phones (over the banners), dark on desktop */}
-          <Logo variant="mobile-light" />
+          {/* Phones: logo on the home page only (other pages show just the menu toggle); always shown on desktop */}
+          <div className={pathname === '/' ? '' : 'max-lg:invisible'}>
+            <Logo variant="mobile-light" />
+          </div>
 
           <ul className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => (

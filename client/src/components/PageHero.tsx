@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import ToolDecor from './ToolDecor';
 
 interface PageHeroProps {
   eyebrow: string;
@@ -36,7 +35,8 @@ function Heading({ eyebrow, title, subtitle, onPhoto }: Pick<PageHeroProps, 'eye
       </h1>
       <p
         className={`mt-3 animate-fade-up leading-relaxed ${
-          onPhoto ? 'max-w-md text-base font-semibold text-navy-900 xl:text-lg' : 'max-w-2xl text-lg text-navy-100'
+          // On the photo: subtitle only on large desktops, where the banner is tall enough below the navbar
+          onPhoto ? 'hidden max-w-md text-base font-semibold text-navy-900 xl:block xl:text-lg' : 'max-w-2xl text-lg text-navy-100'
         }`}
         style={{ animationDelay: '120ms' }}
       >
@@ -49,22 +49,63 @@ function Heading({ eyebrow, title, subtitle, onPhoto }: Pick<PageHeroProps, 'eye
 /**
  * Inner-page banner.
  * - Desktop: the full banner photo (nothing cropped) with the page heading on the left, in the photo's clear area.
- * - Phones: heading on the blue band (room for the logo + menu), with the full photo underneath.
+ * - Phones: a taller banner the logo + menu float over (like the home page), heading below the logo.
  */
 export default function PageHero({ eyebrow, title, subtitle, image, textPosition = 'top-left', labels }: PageHeroProps) {
   const src = encodeURI(image);
   return (
-    <section data-banner className="relative overflow-hidden bg-navy-900">
-      {/* ---- Phones / tablets ---- */}
+    <section className="relative overflow-hidden bg-white">
+      {/* ---- Phones / tablets: no navbar background — the logo floats over the banner ---- */}
       <div className="lg:hidden">
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-0 bg-grid" />
-          <ToolDecor variant="b" light />
-          <div className="container-x relative pt-28 pb-10">
-            <Heading eyebrow={eyebrow} title={title} subtitle={subtitle} />
+        {/* Natural 8:3 shape — the whole photo shows, nothing cropped (e.g. all 7 icons on the Services banner) */}
+        <div data-banner className="relative aspect-[8/3] w-full">
+          <img src={src} alt="" className="absolute inset-0 size-full object-cover" fetchPriority="high" />
+          {/* Gentle shade at the top-right so the white menu toggle stays visible on the bright sky */}
+          <div className="pointer-events-none absolute top-0 right-0 h-20 w-32 bg-gradient-to-bl from-navy-950/40 via-navy-950/10 to-transparent" />
+
+          {/* Small heading on the photo — below the logo, or in the bottom wave for Contact */}
+          <div
+            className={`absolute inset-0 flex px-4 sm:px-6 ${
+              textPosition === 'top-left' ? 'items-start pt-[5%]' : 'items-end pb-[3%]'
+            }`}
+          >
+            <h1
+              className={`animate-fade-up text-[clamp(17px,5vw,32px)] leading-[1.1] text-navy-950 ${
+                textPosition === 'top-left' ? 'max-w-[55%]' : 'max-w-[80%]'
+              }`}
+            >
+              {title}
+            </h1>
           </div>
         </div>
-        <img src={src} alt="" className="block aspect-[8/3] w-full object-cover" fetchPriority="high" />
+
+        {/* Phones: the label names scroll sideways in a strip under the banner */}
+        {labels && labels.length > 0 && (
+          <div className="relative overflow-hidden border-y border-brand-100 bg-brand-50 py-3" aria-label="Services">
+            {/* Soft fade at both edges */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-brand-50 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-brand-50 to-transparent" />
+            {/* The list is repeated twice so the loop is seamless */}
+            <div className="marquee flex w-max">
+              {[0, 1].map((copy) => (
+                <ul key={copy} className="flex shrink-0 items-center" aria-hidden={copy === 1}>
+                  {labels.map((l) => (
+                    <li key={l.text} className="flex items-center">
+                      <a
+                        href={l.href}
+                        tabIndex={copy === 1 ? -1 : undefined}
+                        className="px-4 font-display text-sm font-bold whitespace-nowrap text-navy-900"
+                      >
+                        {l.text}
+                      </a>
+                      <span className="size-1.5 rounded-full bg-brand-500" aria-hidden="true" />
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ---- Desktop: photo with heading on the left ---- */}
@@ -89,7 +130,7 @@ export default function PageHero({ eyebrow, title, subtitle, image, textPosition
 
         <div
           className={`container-x relative flex h-full ${
-            textPosition === 'top-left' ? 'items-start pt-[4%]' : 'items-end pb-[3.5%]'
+            textPosition === 'top-left' ? 'items-start pt-24 xl:pt-28' : 'items-end pb-[3.5%]'
           }`}
         >
           {textPosition === 'top-left' ? (

@@ -236,6 +236,19 @@
   }
 }
 
+/* Ticker: scrolls a doubled list left forever (moves by exactly one copy, so it loops seamlessly) */
+.marquee {
+  animation: marquee 22s linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* Opening screen: spanner swing + loading bar */
 .preloader-wrench {
   transform-origin: 80% 80%;
