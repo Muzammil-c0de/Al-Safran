@@ -158,22 +158,23 @@ export default function Home() {
       </section>
 
       {/* PROCESS */}
-      <section data-dark className="section relative overflow-hidden bg-navy-900">
+      {/* overflow-clip (not hidden) so the desktop pinned scroll works; no padding on desktop so the pinned view fills the screen */}
+      <section data-dark className="section relative overflow-clip bg-navy-900 lg:py-0">
         <div className="pointer-events-none absolute inset-0 bg-grid" />
         <ToolDecor variant="b" light />
         <div className="container-x relative">
-          {/* Extra side padding on phones keeps the heading clear of the pipeline coming down the left edge */}
-          <div className="relative z-10 max-lg:px-6">
-            <SectionHeading
-              light
-              eyebrow="How We Work"
-              title="A simple, transparent process"
-              subtitle="Four clear steps from your first call to a fully working system."
-            />
-          </div>
-
           {/* Water-filled process: scroll down to pump water through each step, scroll up to drain it */}
-          <ProcessFlow steps={steps} />
+          <ProcessFlow
+            steps={steps}
+            heading={
+              <SectionHeading
+                light
+                eyebrow="How We Work"
+                title="A simple, transparent process"
+                subtitle="Four clear steps from your first call to a fully working system."
+              />
+            }
+          />
         </div>
       </section>
 

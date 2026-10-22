@@ -61,10 +61,6 @@ function AcUnit() {
       {/* Display */}
       <path className="ac-draw [animation-delay:0.4s]" pathLength={1} strokeWidth={1.6} d="M146 19 h24 a4 4 0 0 1 4 4 v2 a4 4 0 0 1 -4 4 h-24 a4 4 0 0 1 -4 -4 v-2 a4 4 0 0 1 4 -4 z" />
       <circle cx="136" cy="24" r="2" fill="#3fd8ee" stroke="none" className="ac-light" />
-      {/* Brand */}
-      <text x="26" y="28" fontSize="8" fontWeight="700" fill="#1739a8" fillOpacity="0.55" stroke="none" fontFamily="Tinos, serif" letterSpacing="2">
-        AL SAFRAN
-      </text>
       {/* Vent */}
       <path className="ac-draw [animation-delay:0.55s]" pathLength={1} strokeWidth={1.6} d="M28 50 H172" />
       {/* Swinging flap */}

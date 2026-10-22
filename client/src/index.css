@@ -206,9 +206,6 @@
   }
 }
 /* Process pipeline */
-.pipe-fill {
-  transition: stroke-dashoffset 120ms linear;
-}
 /* Valve wheel turns slowly */
 .valve-wheel {
   transform-box: fill-box;
@@ -218,7 +215,7 @@
 /* Same water colour as the pipes (#3fa9ec) */
 .card-water {
   background: rgb(63 169 236 / 0.9);
-  transition: height 120ms linear;
+  will-change: transform;
 }
 /* Moving wave on the water surface */
 .card-water::before {
