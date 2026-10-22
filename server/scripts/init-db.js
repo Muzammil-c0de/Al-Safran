@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { neon } from '@neondatabase/serverless';
+import { hashPassword } from '../src/auth.js';
 
 if (!process.env.DATABASE_URL) {
   console.error('DATABASE_URL is missing. Copy server/.env.example to server/.env and fill it in.');
@@ -19,6 +20,7 @@ await sql`
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
   )
 `;
+await sql`ALTER TABLE contact_messages ADD COLUMN IF NOT EXISTS is_read BOOLEAN NOT NULL DEFAULT false`;
 
 await sql`
   CREATE TABLE IF NOT EXISTS projects (
@@ -34,6 +36,47 @@ await sql`
   )
 `;
 
+// Images and videos uploaded from the admin panel (stored in Cloudflare R2)
+await sql`
+  CREATE TABLE IF NOT EXISTS media (
+    id          SERIAL PRIMARY KEY,
+    kind        TEXT NOT NULL CHECK (kind IN ('image', 'video')),
+    title       TEXT,
+    file_key    TEXT NOT NULL,
+    url         TEXT NOT NULL,
+    mime_type   TEXT NOT NULL,
+    size_bytes  BIGINT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+  )
+`;
+
+await sql`
+  CREATE TABLE IF NOT EXISTS admin_users (
+    id             SERIAL PRIMARY KEY,
+    username       TEXT NOT NULL UNIQUE,
+    password_hash  TEXT NOT NULL,
+    created_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+  )
+`;
+
 await sql`CREATE INDEX IF NOT EXISTS contact_messages_created_idx ON contact_messages (created_at DESC)`;
+await sql`CREATE INDEX IF NOT EXISTS media_created_idx ON media (created_at DESC)`;
+
+// Create / reset the admin login from ADMIN_USERNAME + ADMIN_PASSWORD (if set)
+const { ADMIN_USERNAME, ADMIN_PASSWORD } = process.env;
+if (ADMIN_USERNAME && ADMIN_PASSWORD) {
+  if (ADMIN_PASSWORD.length < 8) {
+    console.error('ADMIN_PASSWORD must be at least 8 characters.');
+    process.exit(1);
+  }
+  await sql`
+    INSERT INTO admin_users (username, password_hash)
+    VALUES (${ADMIN_USERNAME}, ${hashPassword(ADMIN_PASSWORD)})
+    ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash
+  `;
+  console.log(`✔ Admin user "${ADMIN_USERNAME}" is ready.`);
+} else {
+  console.log('ℹ  Set ADMIN_USERNAME and ADMIN_PASSWORD in .env and run this again to create the admin login.');
+}
 
 console.log('✔ Database tables are ready.');

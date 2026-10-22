@@ -3,6 +3,7 @@ import PageHero from '@/components/PageHero';
 import ProjectCard from '@/components/ProjectCard';
 import Reveal from '@/components/Reveal';
 import CtaBanner from '@/components/CtaBanner';
+import Gallery from '@/components/Gallery';
 import { projectCategories } from '@/data/site';
 import { useProjects } from '@/hooks/useProjects';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
@@ -73,6 +74,9 @@ export default function Projects() {
           )}
         </div>
       </section>
+
+      {/* Images & videos uploaded from the admin panel (hidden until something is uploaded) */}
+      <Gallery />
 
       <CtaBanner />
     </>

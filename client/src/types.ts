@@ -37,5 +37,24 @@ export interface ContactMessage {
   phone: string | null;
   service: string | null;
   message: string;
+  is_read: boolean;
   created_at: string;
+}
+
+export interface MediaItem {
+  id: number;
+  kind: 'image' | 'video';
+  title: string | null;
+  url: string;
+  mime_type: string;
+  size_bytes?: number;
+  created_at: string;
+}
+
+export interface AdminStats {
+  messages: number;
+  unread: number;
+  projects: number;
+  images: number;
+  videos: number;
 }

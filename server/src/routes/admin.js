@@ -1,37 +1,102 @@
 import { Router } from 'express';
 import multer from 'multer';
-import crypto from 'node:crypto';
+import rateLimit from 'express-rate-limit';
 import { sql, requireDb } from '../db.js';
-import { uploadImage, deleteObject, ALLOWED_IMAGE_TYPES } from '../r2.js';
+import { checkLogin, createSession, fixedLogin, hashPassword, requireAdmin, verifyPassword } from '../auth.js';
+import {
+  uploadFile,
+  deleteObject,
+  ALLOWED_IMAGE_TYPES,
+  ALLOWED_MEDIA_TYPES,
+  FILE_TYPES,
+  MAX_IMAGE_BYTES,
+  MAX_VIDEO_BYTES,
+} from '../r2.js';
 
 const router = Router();
 
-const upload = multer({
+const badRequest = (msg) => Object.assign(new Error(msg), { status: 400 });
+
+const imageUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 8 * 1024 * 1024 },
+  limits: { fileSize: MAX_IMAGE_BYTES },
   fileFilter: (req, file, cb) =>
-    ALLOWED_IMAGE_TYPES.includes(file.mimetype)
-      ? cb(null, true)
-      : cb(Object.assign(new Error('Only JPG, PNG, WEBP or AVIF images are allowed.'), { status: 400 })),
+    ALLOWED_IMAGE_TYPES.includes(file.mimetype) ? cb(null, true) : cb(badRequest('Only JPG, PNG, WEBP or AVIF images are allowed.')),
 });
 
-function requireAdmin(req, res, next) {
-  const expected = process.env.ADMIN_TOKEN;
-  const given = req.get('x-admin-token') || '';
-  if (!expected) return res.status(503).json({ error: 'ADMIN_TOKEN is not configured on the server.' });
-  const a = Buffer.from(given);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
-    return res.status(401).json({ error: 'Invalid admin token.' });
+const mediaUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_VIDEO_BYTES },
+  fileFilter: (req, file, cb) =>
+    ALLOWED_MEDIA_TYPES.includes(file.mimetype)
+      ? cb(null, true)
+      : cb(badRequest('Allowed files: JPG, PNG, WEBP, AVIF images or MP4, WEBM, MOV videos.')),
+});
+
+const id = (req) => Number(req.params.id);
+
+// ---------------- Auth ----------------
+
+// Max 10 login attempts per 15 minutes per IP
+router.post('/login', rateLimit({ windowMs: 15 * 60 * 1000, limit: 10 }), async (req, res, next) => {
+  try {
+    const username = String(req.body.username || '').trim();
+    const password = String(req.body.password || '');
+    if (!username || !password) return res.status(400).json({ error: 'Enter your username and password.' });
+    if (!process.env.SESSION_SECRET) return res.status(503).json({ error: 'SESSION_SECRET is not configured on the server.' });
+
+    const user = await checkLogin(username, password);
+    if (!user) return res.status(401).json({ error: 'Incorrect username or password.' });
+    res.json({ token: createSession(user), username: user.username });
+  } catch (err) {
+    next(err);
   }
-  next();
-}
+});
 
-router.use(requireAdmin, requireDb);
+// Everything below requires a valid session
+router.use(requireAdmin);
 
-router.get('/verify', (req, res) => res.json({ ok: true }));
+router.get('/me', (req, res) => res.json({ username: req.admin.username, fixed: fixedLogin() }));
 
-// ---- Messages ----
+router.use(requireDb);
+
+router.post('/password', async (req, res, next) => {
+  try {
+    if (fixedLogin()) {
+      return res.status(400).json({ error: 'The login is fixed in the server settings (.env). Change ADMIN_PASSWORD there.' });
+    }
+    const current = String(req.body.current || '');
+    const next_ = String(req.body.next || '');
+    if (next_.length < 8) return res.status(400).json({ error: 'New password must be at least 8 characters.' });
+    const [user] = await sql`SELECT password_hash FROM admin_users WHERE id = ${req.admin.id}`;
+    if (!user || !verifyPassword(current, user.password_hash)) {
+      return res.status(400).json({ error: 'Current password is incorrect.' });
+    }
+    await sql`UPDATE admin_users SET password_hash = ${hashPassword(next_)} WHERE id = ${req.admin.id}`;
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ---------------- Dashboard ----------------
+
+router.get('/stats', async (req, res, next) => {
+  try {
+    const [m] = await sql`SELECT count(*)::int AS total, count(*) FILTER (WHERE NOT is_read)::int AS unread FROM contact_messages`;
+    const [p] = await sql`SELECT count(*)::int AS total FROM projects`;
+    const [md] = await sql`
+      SELECT count(*) FILTER (WHERE kind = 'image')::int AS images,
+             count(*) FILTER (WHERE kind = 'video')::int AS videos
+      FROM media`;
+    res.json({ messages: m.total, unread: m.unread, projects: p.total, images: md.images, videos: md.videos });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ---------------- Messages ----------------
+
 router.get('/messages', async (req, res, next) => {
   try {
     res.json(await sql`SELECT * FROM contact_messages ORDER BY created_at DESC LIMIT 500`);
@@ -40,17 +105,28 @@ router.get('/messages', async (req, res, next) => {
   }
 });
 
-router.delete('/messages/:id', async (req, res, next) => {
+router.patch('/messages/:id', async (req, res, next) => {
   try {
-    await sql`DELETE FROM contact_messages WHERE id = ${Number(req.params.id)}`;
+    const isRead = Boolean(req.body.is_read);
+    await sql`UPDATE contact_messages SET is_read = ${isRead} WHERE id = ${id(req)}`;
     res.json({ ok: true });
   } catch (err) {
     next(err);
   }
 });
 
-// ---- Projects ----
-router.post('/projects', upload.single('image'), async (req, res, next) => {
+router.delete('/messages/:id', async (req, res, next) => {
+  try {
+    await sql`DELETE FROM contact_messages WHERE id = ${id(req)}`;
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ---------------- Projects ----------------
+
+router.post('/projects', imageUpload.single('image'), async (req, res, next) => {
   try {
     const title = (req.body.title || '').trim().slice(0, 200);
     const category = (req.body.category || '').trim().slice(0, 120);
@@ -61,7 +137,7 @@ router.post('/projects', upload.single('image'), async (req, res, next) => {
     if (!title || !category) return res.status(400).json({ error: 'Title and category are required.' });
 
     let image = { key: null, url: null };
-    if (req.file) image = await uploadImage(req.file, 'projects');
+    if (req.file) image = await uploadFile(req.file, 'projects');
 
     const [row] = await sql`
       INSERT INTO projects (title, category, location, description, image_key, image_url, completed_on)
@@ -76,9 +152,61 @@ router.post('/projects', upload.single('image'), async (req, res, next) => {
 
 router.delete('/projects/:id', async (req, res, next) => {
   try {
-    const [row] = await sql`DELETE FROM projects WHERE id = ${Number(req.params.id)} RETURNING image_key`;
+    const [row] = await sql`DELETE FROM projects WHERE id = ${id(req)} RETURNING image_key`;
     if (!row) return res.status(404).json({ error: 'Project not found.' });
     await deleteObject(row.image_key).catch((e) => console.warn('R2 delete failed:', e.message));
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ---------------- Media (images & videos) ----------------
+
+router.get('/media', async (req, res, next) => {
+  try {
+    res.json(await sql`SELECT * FROM media ORDER BY created_at DESC LIMIT 1000`);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/media', mediaUpload.single('file'), async (req, res, next) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: 'Choose an image or video to upload.' });
+    const kind = FILE_TYPES[req.file.mimetype].kind;
+    if (kind === 'image' && req.file.size > MAX_IMAGE_BYTES) {
+      return res.status(400).json({ error: 'Images must be under 10 MB.' });
+    }
+    const title = (req.body.title || '').trim().slice(0, 200) || null;
+    const file = await uploadFile(req.file, kind === 'video' ? 'videos' : 'images');
+    const [row] = await sql`
+      INSERT INTO media (kind, title, file_key, url, mime_type, size_bytes)
+      VALUES (${kind}, ${title}, ${file.key}, ${file.url}, ${req.file.mimetype}, ${req.file.size})
+      RETURNING *
+    `;
+    res.status(201).json(row);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/media/:id', async (req, res, next) => {
+  try {
+    const title = String(req.body.title || '').trim().slice(0, 200) || null;
+    const [row] = await sql`UPDATE media SET title = ${title} WHERE id = ${id(req)} RETURNING *`;
+    if (!row) return res.status(404).json({ error: 'File not found.' });
+    res.json(row);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/media/:id', async (req, res, next) => {
+  try {
+    const [row] = await sql`DELETE FROM media WHERE id = ${id(req)} RETURNING file_key`;
+    if (!row) return res.status(404).json({ error: 'File not found.' });
+    await deleteObject(row.file_key).catch((e) => console.warn('R2 delete failed:', e.message));
     res.json({ ok: true });
   } catch (err) {
     next(err);
