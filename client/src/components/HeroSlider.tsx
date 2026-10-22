@@ -60,7 +60,7 @@ export default function HeroSlider() {
   }, [current, count]);
 
   return (
-    <section className="relative overflow-hidden bg-white" aria-roledescription="carousel" aria-label="Highlights">
+    <section data-banner className="relative overflow-hidden bg-white" aria-roledescription="carousel" aria-label="Highlights">
       {/* Sliding track */}
       <div
         className="flex transition-transform duration-700 ease-[cubic-bezier(0.65,0,0.35,1)]"

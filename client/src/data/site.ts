@@ -14,8 +14,13 @@ export const site = {
     { label: '055-890 8664', href: 'tel:+971558908664' },
     { label: '050-676 1036', href: 'tel:+971506761036' },
   ],
-  whatsapp: '', // e.g. '971558908664' (digits only) to show a WhatsApp button — leave empty to hide
+  whatsapp: '971558908664', // +971 55 890 8664 — digits only; leave empty to hide the WhatsApp button
   email: 'mail2alsafran@gmail.com',
+  /** Social links shown in the footer — leave a link empty to hide its icon */
+  social: {
+    instagram: 'https://www.instagram.com/alsafranac/',
+    facebook: '', // TODO: add the Facebook page link
+  },
   address: 'P.O. Box 76368, Dubai, U.A.E.',
   hours: 'Service calls attended year-round',
 

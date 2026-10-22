@@ -9,12 +9,26 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
   const isHome = pathname === '/';
-  // Transparent over the home banner (phones and desktop); solid white once scrolled or on other pages.
+  // Desktop: transparent over the home banner; liquid glass once scrolled or on other pages.
   const solid = scrolled || !isHome;
-  // White logo text/toggle only while sitting over the banner with the menu closed
-  const overBanner = !solid && !open;
 
   useEffect(() => setOpen(false), [pathname]);
+
+  // Phones: is the toggle still sitting over the page's banner (marked with data-banner)?
+  const [overBanner, setOverBanner] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      const banner = document.querySelector('main [data-banner]');
+      setOverBanner(Boolean(banner && banner.getBoundingClientRect().bottom > 60));
+    };
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -32,20 +46,23 @@ export default function Navbar() {
 
   return (
     <>
+      {/*
+        Phones: no background — the logo sits at the top of the page and scrolls away; only the toggle (below) stays fixed.
+        Desktop: fixed over the home banner / sticky elsewhere, turning to liquid glass once scrolled.
+      */}
       <header
-        className={`top-0 border-b transition-all duration-300 ${open ? 'z-[70]' : 'z-50'} ${
-          isHome ? 'fixed inset-x-0' : 'sticky'
+        className={`absolute inset-x-0 top-0 z-50 border-b border-transparent transition-all duration-300 ${
+          isHome ? 'lg:fixed' : 'lg:sticky'
         } ${
-          open
-            ? 'border-transparent bg-transparent'
-            : solid
-            ? // Liquid glass: see-through white, heavy blur + colour boost, bright top edge and soft shadow
-              'border-white/50 bg-gradient-to-b from-white/70 to-white/45 shadow-[0_8px_32px_rgba(14,21,70,0.12),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(255,255,255,0.35)] backdrop-blur-2xl backdrop-saturate-[1.8]'
-            : 'border-transparent bg-transparent'
+          solid
+            ? // Liquid glass (desktop only): see-through white, heavy blur + colour boost, bright edges, soft shadow
+              'lg:border-white/50 lg:bg-gradient-to-b lg:from-white/70 lg:to-white/45 lg:shadow-[0_8px_32px_rgba(14,21,70,0.12),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(255,255,255,0.35)] lg:backdrop-blur-2xl lg:backdrop-saturate-[1.8]'
+            : ''
         }`}
       >
         <nav className="container-x flex h-20 items-center justify-between gap-4" aria-label="Main">
-          <Logo variant={overBanner ? 'mobile-light' : 'dark'} onClick={() => setOpen(false)} />
+          {/* White on phones (over the banners), dark on desktop */}
+          <Logo variant="mobile-light" />
 
           <ul className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => (
@@ -80,10 +97,18 @@ export default function Navbar() {
             </Link>
           </div>
 
+        </nav>
+      </header>
+
+      {/* Phones: the toggle stays fixed top-right while scrolling — white over the banner, navy over white content */}
+      <div className="fixed top-[25px] right-4 z-[70] sm:right-6 lg:hidden">
+        <div>
           {/* Animated toggle: three bars fold into an X and the button rotates */}
           <button
             type="button"
-            className={`menu-toggle lg:hidden ${overBanner ? 'text-white' : 'text-navy-900'}`}
+            className={`menu-toggle transition-colors ${
+              overBanner && !open ? 'text-white drop-shadow-[0_1px_3px_rgba(14,21,70,0.5)]' : 'text-navy-900'
+            }`}
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -93,8 +118,8 @@ export default function Navbar() {
             <span className="bars bar2" />
             <span className="bars bar3" />
           </button>
-        </nav>
-      </header>
+        </div>
+      </div>
 
       {/* Mobile menu — slides in from the left */}
       {/* Visibility transitions too, so the panel stays visible until it has fully slid out */}
@@ -115,8 +140,10 @@ export default function Navbar() {
           }`}
           aria-label="Mobile menu"
         >
-          {/* Space for the navbar, which stays on top while the menu is open */}
-          <div className="h-20 shrink-0 border-b border-slate-100" />
+          {/* Menu header: logo on the left, the fixed toggle sits on the right */}
+          <div className="flex h-20 shrink-0 items-center border-b border-slate-100 px-4 sm:px-6">
+            <Logo onClick={() => setOpen(false)} />
+          </div>
 
           <ul className="flex flex-col gap-1 overflow-y-auto p-4">
             {navLinks.map((link) => (
@@ -137,8 +164,9 @@ export default function Navbar() {
           </ul>
 
           <div className="mt-auto space-y-3 border-t border-slate-100 p-5">
-            <a href={site.phoneHref} className="flex items-center gap-3 text-sm font-semibold text-navy-900">
-              <Phone className="size-4 text-brand-500" /> {site.phone}
+            {/* Mobile number (same as WhatsApp) */}
+            <a href={site.mobiles[0].href} className="flex items-center gap-3 text-sm font-semibold text-navy-900">
+              <Phone className="size-4 text-brand-500" /> {site.mobiles[0].label}
             </a>
             <a href={`mailto:${site.email}`} className="flex items-center gap-3 text-sm font-semibold break-all text-navy-900">
               <Mail className="size-4 shrink-0 text-brand-500" /> {site.email}

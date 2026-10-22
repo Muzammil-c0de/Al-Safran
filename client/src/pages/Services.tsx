@@ -18,8 +18,10 @@ export default function Services() {
       />
 
       {/* Quick jump */}
-      <div className="sticky top-20 z-30 border-b border-slate-200 bg-white/90 backdrop-blur-lg">
-        <div className="container-x flex gap-2 overflow-x-auto py-3 [scrollbar-width:none]">
+      {/* Sticky on desktop only — on phones it scrolls away with the page */}
+      <div className="z-30 border-b border-slate-200 bg-white/90 backdrop-blur-lg lg:sticky lg:top-20">
+        {/* Right padding on phones keeps the chips clear of the fixed menu toggle */}
+        <div className="container-x flex gap-2 overflow-x-auto py-4 [scrollbar-width:none] max-lg:pr-20">
           {services.map((s) => (
             <a
               key={s.slug}

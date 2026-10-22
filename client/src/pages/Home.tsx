@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   BadgeCheck,
@@ -27,7 +27,7 @@ const reasons = [
   {
     icon: HardHat,
     title: 'Since 1985',
-    text: 'Decades of air-conditioning and ducting experience across the U.A.E. — residential and commercial.',
+    text: 'Decades of air-conditioning and ducting experience across the U.A.E. â€” residential and commercial.',
   },
   {
     icon: ShieldCheck,
@@ -37,7 +37,7 @@ const reasons = [
   {
     icon: Timer,
     title: 'Completed on time',
-    text: 'Small or large, we complete projects on time — which is why our clients keep coming back.',
+    text: 'Small or large, we complete projects on time â€” which is why our clients keep coming back.',
   },
   {
     icon: BadgeCheck,
@@ -62,7 +62,7 @@ export default function Home() {
       {/* HERO SLIDER */}
       <HeroSlider />
 
-      {/* Stats — below the banner, centred */}
+      {/* Stats â€” below the banner, centred */}
       <section className="border-b border-slate-200 bg-white">
         <dl className="container-x mx-auto grid max-w-5xl grid-cols-4 divide-x divide-slate-200 py-8 text-center md:py-12">
           {site.stats.map((s) => (
@@ -90,9 +90,9 @@ export default function Home() {
             subtitle="Seven specialist services covering the full building services package for new homes, offices and fit-outs."
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {/* Phones: stacked-card scroll — each card sticks under the navbar and the next one slides up over it */}
+            {/* Phones: stacked-card scroll â€” each card sticks under the navbar and the next one slides up over it */}
             {services.map((s, i) => (
-              <div key={s.slug} className="max-sm:sticky" style={{ top: `calc(6rem + ${i * 12}px)` }}>
+              <div key={s.slug} className="max-sm:sticky" style={{ top: `calc(5rem + ${i * 12}px)` }}>
                 <Reveal delay={(i % 4) * 80} className="h-full">
                   <div className="h-full rounded-2xl max-sm:shadow-[0_-8px_30px_rgba(14,21,70,0.12)]">
                     <ServiceCard service={s} index={i} />
@@ -100,7 +100,7 @@ export default function Home() {
                 </Reveal>
               </div>
             ))}
-            <div className="max-sm:sticky" style={{ top: `calc(6rem + ${services.length * 12}px)` }}>
+            <div className="max-sm:sticky" style={{ top: `calc(5rem + ${services.length * 12}px)` }}>
             <Reveal delay={240} className="h-full">
               <Link
                 to="/contact"
@@ -131,7 +131,7 @@ export default function Home() {
               align="left"
               eyebrow="Why Al Safran"
               title="One of the leading air-conditioning contractors in the U.A.E."
-              subtitle="Professional advice, appropriate design, quality workmanship and reliable after-sales service — delivered by skilled technicians working as one company and one team."
+              subtitle="Professional advice, appropriate design, quality workmanship and reliable after-sales service â€” delivered by skilled technicians working as one company and one team."
             />
             <Link to="/about" className="btn btn-dark mt-8">
               More About Us <ArrowRight className="size-4" />

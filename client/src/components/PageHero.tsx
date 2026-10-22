@@ -10,13 +10,13 @@ interface PageHeroProps {
 
 export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
   return (
-    <section className="relative overflow-hidden bg-navy-900">
+    <section data-banner className="relative overflow-hidden bg-navy-900">
       <div className="pointer-events-none absolute inset-0 bg-grid" />
       <div className="pointer-events-none absolute -top-32 -right-32 size-96 rounded-full bg-brand-500/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-40 -left-20 size-96 rounded-full bg-navy-500/30 blur-3xl" />
       <ToolDecor variant="b" light />
 
-      <div className="container-x relative py-20 lg:py-28">
+      <div className="container-x relative pt-28 pb-20 lg:py-28">
         <nav className="flex items-center gap-1.5 text-sm text-navy-300" aria-label="Breadcrumb">
           <Link to="/" className="hover:text-white">
             Home
