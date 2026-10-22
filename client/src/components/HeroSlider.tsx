@@ -16,8 +16,8 @@ interface Slide {
 
 const slides: Slide[] = [
   {
-    image: '/banner1.png',
-    mobileImage: '/banner1mobile.png',
+    image: '/banner1.webp',
+    mobileImage: '/banner1mobile.webp',
     alt: 'Al Safran technicians servicing rooftop chilled water and HVAC equipment',
     eyebrow: site.slogan,
     title: [
@@ -30,8 +30,8 @@ const slides: Slide[] = [
     secondary: { to: '/services', label: 'Explore Services' },
   },
   {
-    image: '/banner2.png',
-    mobileImage: '/banner2mobile.png',
+    image: '/banner2.webp',
+    mobileImage: '/banner2mobile.webp',
     alt: 'Al Safran team installing GI ductwork and ceiling diffusers',
     eyebrow: 'Ducting Specialists',
     title: [

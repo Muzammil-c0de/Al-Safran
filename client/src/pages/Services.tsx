@@ -15,7 +15,7 @@ export default function Services() {
         eyebrow="Services"
         title="Complete HVAC & MEP Solutions"
         subtitle="Chilled water FCU/AHU, GI & PI ducting, duct cleaning, AC, electrical and plumbing — delivered by one dependable team."
-        image="/ourservice banner.png"
+        image="/ourservice banner.webp"
         // Service names under the 7 icons in the banner image (positions match the icons)
         labels={[
           { x: 11.65, y: 88.5, text: 'AC Installation & Maintenance', href: '#ac-works' },

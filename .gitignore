@@ -1,4 +1,6 @@
 node_modules/
+# Full-size originals of the site images (the site uses the optimised .webp copies in client/public)
+client/original-images/
 dist/
 .env
 .env.local

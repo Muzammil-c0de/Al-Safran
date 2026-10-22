@@ -79,7 +79,7 @@ export default function About() {
         eyebrow="About Us"
         title={`Keeping the U.A.E. Cool Since ${site.since}`}
         subtitle={`${site.legalName} — trusted air-conditioning contractors delivering quality workmanship for over ${years} years.`}
-        image="/about us banner.png"
+        image="/about us banner.webp"
       />
 
       {/* Story */}

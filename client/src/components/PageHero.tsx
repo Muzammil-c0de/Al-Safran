@@ -1,3 +1,4 @@
+﻿import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 
@@ -51,15 +52,63 @@ function Heading({ eyebrow, title, subtitle, onPhoto }: Pick<PageHeroProps, 'eye
  * - Desktop: the full banner photo (nothing cropped) with the page heading on the left, in the photo's clear area.
  * - Phones: a taller banner the logo + menu float over (like the home page), heading below the logo.
  */
+/** Banners already shown once this visit — shown instantly (no fade) when you come back to that page. */
+const shownBanners = new Set<string>();
+
+/** "/about us banner.webp" → phone-sized copy "/about us banner-sm.webp" (828px wide). */
+export const smallBanner = (image: string) => image.replace(/\.webp$/, '-sm.webp');
+
+const PHONE_QUERY = '(max-width: 1023px)';
+
+/** True on phones/tablets (below the desktop layout). */
+function useIsPhone() {
+  const [isPhone, setIsPhone] = useState(() => window.matchMedia(PHONE_QUERY).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(PHONE_QUERY);
+    const onChange = () => setIsPhone(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  return isPhone;
+}
+
+/**
+ * Banner photo — exactly one file per page: the small copy on phones, the full one on desktop (the same
+ * file that was preloaded, so it shows straight from the cache). Fades in only the first time.
+ */
+function BannerImage({ file }: { file: string }) {
+  const src = encodeURI(file);
+  const [loaded, setLoaded] = useState(() => shownBanners.has(src));
+  const done = () => {
+    shownBanners.add(src);
+    setLoaded(true);
+  };
+  return (
+    <img
+      key={src}
+      src={src}
+      alt=""
+      fetchPriority="high"
+      decoding="async"
+      ref={(el) => {
+        // Already in the browser cache (e.g. preloaded) → show immediately
+        if (el?.complete && el.naturalWidth && !loaded) done();
+      }}
+      onLoad={done}
+      className={`absolute inset-0 size-full object-cover ${loaded ? 'opacity-100' : 'opacity-0 transition-opacity duration-300'}`}
+    />
+  );
+}
+
 export default function PageHero({ eyebrow, title, subtitle, image, textPosition = 'top-left', labels }: PageHeroProps) {
-  const src = encodeURI(image);
+  const isPhone = useIsPhone();
   return (
     <section className="relative overflow-hidden bg-white">
       {/* ---- Phones / tablets: no navbar background — the logo floats over the banner ---- */}
       <div className="lg:hidden">
         {/* Natural 8:3 shape — the whole photo shows, nothing cropped (e.g. all 7 icons on the Services banner) */}
-        <div data-banner className="relative aspect-[8/3] w-full">
-          <img src={src} alt="" className="absolute inset-0 size-full object-cover" fetchPriority="high" />
+        <div data-banner className="relative aspect-[8/3] w-full bg-gradient-to-br from-sky-100 via-brand-50 to-white">
+          {isPhone && <BannerImage file={smallBanner(image)} />}
           {/* Gentle shade at the top-right so the white menu toggle stays visible on the bright sky */}
           <div className="pointer-events-none absolute top-0 right-0 h-20 w-32 bg-gradient-to-bl from-navy-950/40 via-navy-950/10 to-transparent" />
 
@@ -109,8 +158,8 @@ export default function PageHero({ eyebrow, title, subtitle, image, textPosition
       </div>
 
       {/* ---- Desktop: photo with heading on the left ---- */}
-      <div className="relative hidden aspect-[8/3] w-full lg:block">
-        <img src={src} alt="" className="absolute inset-0 size-full object-cover" fetchPriority="high" />
+      <div className="relative hidden aspect-[8/3] w-full bg-gradient-to-br from-sky-100 via-brand-50 to-white lg:block">
+        {!isPhone && <BannerImage file={image} />}
 
         {/* Labels on the photo (e.g. service names under the icons) — sized with the banner width */}
         {labels?.map((l) => {

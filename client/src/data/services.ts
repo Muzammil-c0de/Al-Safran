@@ -9,7 +9,7 @@ export const services: Service[] = [
     description:
       'Complete installation, commissioning and maintenance of chilled water Fan Coil Units and Air Handling Units — keeping your building cool, efficient and quiet all year round.',
     icon: Fan,
-    image: '/images/FCU.png',
+    image: '/images/FCU.webp',
     features: [
       'Supply & installation of FCUs and AHUs',
       'Chilled water piping, valves & insulation',
@@ -25,7 +25,7 @@ export const services: Service[] = [
     description:
       'Our Ducting division provides complete ducting works for HVAC systems — designing and installing all types of new ducts, and maintaining and repairing existing ducts to rectify air leakage problems.',
     icon: Wind,
-    image: '/images/ducting.png',
+    image: '/images/ducting.webp',
     features: [
       'Duct sizes designed to suit A/C unit capacity',
       'Ducting layouts prepared for authority approval',
@@ -41,7 +41,7 @@ export const services: Service[] = [
     description:
       'We manufacture and install G.I. ducts on site to suit each HVAC system, using G.I. sheets in different thicknesses with different types of insulation — and fabricate ducts on site from 20 mm pre-insulated panels.',
     icon: Layers,
-    image: '/images/gi%20duct%20and%20pi%20duct.png',
+    image: '/images/gi%20duct%20and%20pi%20duct.webp',
     features: [
       'G.I. ducts made to the size of your HVAC system',
       'G.I. sheets in different thicknesses',
@@ -57,7 +57,7 @@ export const services: Service[] = [
     description:
       'Dust, mould and bacteria build up inside ductwork over time. Our cleaning service restores airflow and indoor air quality with minimal disruption to your home or office.',
     icon: Sparkles,
-    image: '/images/duct%20and%20defuser%20cleaning.png',
+    image: '/images/duct%20and%20defuser%20cleaning.webp',
     features: [
       'Mechanical brushing & HEPA vacuuming',
       'Diffuser & grille removal and washing',
@@ -73,7 +73,7 @@ export const services: Service[] = [
     description:
       'Safe, neat and code-compliant electrical installations for new homes and offices — from conduiting and wiring through to final testing and handover.',
     icon: Zap,
-    image: '/images/electrical%20work.png',
+    image: '/images/electrical%20work.webp',
     features: [
       'Conduiting & wiring for new projects',
       'Distribution boards, breakers & panels',
@@ -89,7 +89,7 @@ export const services: Service[] = [
     description:
       'Our technical team is experienced in all types of air-conditioning. We install systems for new construction, renovation and modification projects, and our Service department maintains residential and commercial equipment year-round.',
     icon: AirVent,
-    image: '/images/ac%20work.png',
+    image: '/images/ac%20work.webp',
     features: [
       'All types of air-conditioning systems',
       'New construction & renovation installations',
@@ -105,7 +105,7 @@ export const services: Service[] = [
     description:
       'Reliable water supply and drainage systems for new builds and renovations, installed cleanly and pressure-tested before handover.',
     icon: Droplets,
-    image: '/images/plumbing.png',
+    image: '/images/plumbing.webp',
     features: [
       'Water supply piping (PPR / CPVC)',
       'Drainage & sewage lines',

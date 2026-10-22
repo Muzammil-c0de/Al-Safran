@@ -28,7 +28,7 @@ export default function Projects() {
         eyebrow="Projects"
         title="Projects Built to Perform"
         subtitle="Air-conditioning, ducting and MEP works delivered across the U.A.E. — on time and to standard."
-        image="/project banner.png"
+        image="/project banner.webp"
       />
 
       <section className="section">

@@ -80,7 +80,7 @@ export default function Contact() {
         eyebrow="Contact"
         title="Let's Talk About Your Project"
         subtitle="Request a quotation, book a site inspection or ask about maintenance — we usually reply within one working day."
-        image="/contact banner.png"
+        image="/contact banner.webp"
         textPosition="bottom-left"
       />
 

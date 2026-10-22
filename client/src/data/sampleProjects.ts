@@ -15,7 +15,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Commercial interior',
     description: 'Exposed supply ductwork finished in a custom colour to match the interior, with round ceiling diffusers and drop-down outlets.',
-    image_url: img('image1.jpeg'),
+    image_url: img('image1.webp'),
     completed_on: null,
   },
   {
@@ -24,7 +24,7 @@ export const sampleProjects: Project[] = [
     category: 'HVAC & Chilled Water',
     location: 'Rooftop plant area',
     description: 'Supply and return duct connections to a rooftop air handling unit, built with pre-insulated panels and weather-protected joints.',
-    image_url: img('image1 (5).jpeg'),
+    image_url: img('image1 (5).webp'),
     completed_on: null,
   },
   {
@@ -33,7 +33,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Commercial interior',
     description: 'Swirl diffusers installed in an open-cell grid ceiling for even, draught-free air distribution across a large open space.',
-    image_url: img('image1 (8).jpeg'),
+    image_url: img('image1 (8).webp'),
     completed_on: null,
   },
   {
@@ -42,7 +42,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Office space',
     description: 'Pre-insulated panel ductwork with square ceiling diffusers, connected to a ducted AC unit and hung on threaded-rod supports.',
-    image_url: img('image3.jpeg'),
+    image_url: img('image3.webp'),
     completed_on: null,
   },
   {
@@ -51,7 +51,7 @@ export const sampleProjects: Project[] = [
     category: 'HVAC & Chilled Water',
     location: 'Rooftop plant area',
     description: 'Insulated chilled water supply and return piping with isolation valves and control valve, connected to a rooftop AHU on steel supports.',
-    image_url: img('image1 (6).jpeg'),
+    image_url: img('image1 (6).webp'),
     completed_on: null,
   },
   {
@@ -60,7 +60,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Rooftop',
     description: 'Large pre-insulated duct runs with transitions and bends across the roof, finished with sealed, weather-resistant joints.',
-    image_url: img('image1 (4).jpeg'),
+    image_url: img('image1 (4).webp'),
     completed_on: null,
   },
   {
@@ -69,7 +69,7 @@ export const sampleProjects: Project[] = [
     category: 'HVAC & Chilled Water',
     location: 'Rooftop plant area',
     description: 'Pre-insulated supply and return ducts running from the air handling unit, with neat transitions and supports along the roof.',
-    image_url: img('image1 (7).jpeg'),
+    image_url: img('image1 (7).webp'),
     completed_on: null,
   },
   {
@@ -78,7 +78,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Commercial building',
     description: 'Galvanised iron (GI) supply duct with a fabricated radius elbow, supported on channel hangers alongside the cable tray.',
-    image_url: img('image1 (2).jpeg'),
+    image_url: img('image1 (2).webp'),
     completed_on: null,
   },
   {
@@ -87,7 +87,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Commercial fit-out',
     description: 'Pre-insulated duct with a large radius bend installed in the ceiling void before the false ceiling is closed.',
-    image_url: img('image1 (1).jpeg'),
+    image_url: img('image1 (1).webp'),
     completed_on: null,
   },
   {
@@ -96,7 +96,7 @@ export const sampleProjects: Project[] = [
     category: 'AC Works',
     location: 'Commercial interior',
     description: 'Ducted AC unit with an exposed, painted supply duct and linear grille, coordinated with the services on the open ceiling.',
-    image_url: img('image1 (3).jpeg'),
+    image_url: img('image1 (3).webp'),
     completed_on: null,
   },
   {
@@ -105,7 +105,7 @@ export const sampleProjects: Project[] = [
     category: 'AC Works',
     location: 'Office space',
     description: 'Square ceiling diffusers and return grilles fitted into a suspended tile ceiling for a clean, even office air layout.',
-    image_url: img('image1 (9).jpeg'),
+    image_url: img('image1 (9).webp'),
     completed_on: null,
   },
   {
@@ -114,7 +114,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Café / restaurant',
     description: 'Linear slot diffusers set into the gypsum ceiling bulkheads, lined up with the downlights for a neat architectural finish.',
-    image_url: img('image1 (10).jpeg'),
+    image_url: img('image1 (10).webp'),
     completed_on: null,
   },
   {
@@ -123,7 +123,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Café / restaurant',
     description: 'Long multi-slot linear diffusers running the length of the dining area ceiling for quiet, discreet air distribution.',
-    image_url: img('image1 (11).jpeg'),
+    image_url: img('image1 (11).webp'),
     completed_on: null,
   },
   {
@@ -132,7 +132,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Commercial kitchen',
     description: 'Kitchen exhaust hood with GI extract ductwork and branch connections, installed before the ceiling framing is closed.',
-    image_url: img('image1 (12).jpeg'),
+    image_url: img('image1 (12).webp'),
     completed_on: null,
   },
   {
@@ -141,7 +141,7 @@ export const sampleProjects: Project[] = [
     category: 'Ducting',
     location: 'Commercial interior',
     description: 'Exposed ducts and insulated pipework painted to suit the design, neatly supported on channel hangers with round diffusers.',
-    image_url: img('image2.jpeg'),
+    image_url: img('image2.webp'),
     completed_on: null,
   },
 ];
