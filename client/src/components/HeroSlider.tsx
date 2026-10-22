@@ -72,7 +72,7 @@ export default function HeroSlider() {
           return (
             <div
               key={s.image}
-              className="relative flex w-full shrink-0 aspect-[941/1672] max-h-[820px] lg:aspect-[5/2] lg:max-h-none lg:min-h-[560px]"
+              className="relative flex h-[100svh] min-h-[560px] w-full shrink-0 lg:aspect-[5/2] lg:h-auto lg:min-h-[560px]"
               aria-hidden={!active}
               aria-roledescription="slide"
               aria-label={`${idx + 1} of ${count}`}

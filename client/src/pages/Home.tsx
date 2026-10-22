@@ -13,6 +13,7 @@ import {
 import HeroSlider from '@/components/HeroSlider';
 import CountUp from '@/components/CountUp';
 import ToolDecor from '@/components/ToolDecor';
+import ProcessFlow from '@/components/ProcessFlow';
 import Reveal from '@/components/Reveal';
 import SectionHeading from '@/components/SectionHeading';
 import ServiceCard from '@/components/ServiceCard';
@@ -157,33 +158,22 @@ export default function Home() {
       </section>
 
       {/* PROCESS */}
-      <section className="section relative overflow-hidden bg-navy-900">
+      <section data-dark className="section relative overflow-hidden bg-navy-900">
         <div className="pointer-events-none absolute inset-0 bg-grid" />
         <ToolDecor variant="b" light />
         <div className="container-x relative">
-          <SectionHeading
-            light
-            eyebrow="How We Work"
-            title="A simple, transparent process"
-            subtitle="Four clear steps from your first call to a fully working system."
-          />
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map((s, i) => {
-              const Icon = s.icon;
-              return (
-                <Reveal key={s.title} delay={i * 100}>
-                  <div className="relative h-full rounded-2xl border border-white/10 bg-white/[0.04] p-7">
-                    <span className="absolute top-6 right-6 text-sm font-bold text-navy-400">0{i + 1}</span>
-                    <span className="grid size-12 place-items-center rounded-xl bg-white text-navy-900">
-                      <Icon className="size-6" />
-                    </span>
-                    <h3 className="mt-6 text-lg text-white">{s.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-navy-200">{s.text}</p>
-                  </div>
-                </Reveal>
-              );
-            })}
+          {/* Extra side padding on phones keeps the heading clear of the pipeline coming down the left edge */}
+          <div className="relative z-10 max-lg:px-6">
+            <SectionHeading
+              light
+              eyebrow="How We Work"
+              title="A simple, transparent process"
+              subtitle="Four clear steps from your first call to a fully working system."
+            />
           </div>
+
+          {/* Water-filled process: scroll down to pump water through each step, scroll up to drain it */}
+          <ProcessFlow steps={steps} />
         </div>
       </section>
 

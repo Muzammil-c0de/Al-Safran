@@ -14,12 +14,16 @@ export default function Navbar() {
 
   useEffect(() => setOpen(false), [pathname]);
 
-  // Phones: is the toggle still sitting over the page's banner (marked with data-banner)?
+  // Phones: is the toggle sitting over a banner or any dark/blue section (marked data-banner / data-dark)?
   const [overBanner, setOverBanner] = useState(false);
   useEffect(() => {
     const check = () => {
-      const banner = document.querySelector('main [data-banner]');
-      setOverBanner(Boolean(banner && banner.getBoundingClientRect().bottom > 60));
+      const y = 40; // vertical centre of the toggle
+      const dark = Array.from(document.querySelectorAll('[data-banner], [data-dark]')).some((el) => {
+        const r = el.getBoundingClientRect();
+        return r.top <= y && r.bottom >= y;
+      });
+      setOverBanner(dark);
     };
     check();
     window.addEventListener('scroll', check, { passive: true });

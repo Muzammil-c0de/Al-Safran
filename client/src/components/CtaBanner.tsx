@@ -7,7 +7,7 @@ export default function CtaBanner() {
   return (
     <section className="section pt-0">
       <div className="container-x">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 via-brand-500 to-brand-700 px-6 py-14 sm:px-12 lg:px-16 lg:py-16">
+        <div data-dark className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-500 via-brand-500 to-brand-700 px-6 py-14 sm:px-12 lg:px-16 lg:py-16">
           <div className="pointer-events-none absolute inset-0 bg-grid opacity-60" />
           <div className="pointer-events-none absolute -top-24 -right-24 size-80 rounded-full bg-white/15 blur-2xl" />
           <ToolDecor variant="c" light />
