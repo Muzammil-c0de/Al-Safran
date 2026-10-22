@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import ToolDecor from './ToolDecor';
 
 interface PageHeroProps {
   eyebrow: string;
@@ -13,6 +14,7 @@ export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
       <div className="pointer-events-none absolute inset-0 bg-grid" />
       <div className="pointer-events-none absolute -top-32 -right-32 size-96 rounded-full bg-brand-500/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-40 -left-20 size-96 rounded-full bg-navy-500/30 blur-3xl" />
+      <ToolDecor variant="b" light />
 
       <div className="container-x relative py-20 lg:py-28">
         <nav className="flex items-center gap-1.5 text-sm text-navy-300" aria-label="Breadcrumb">

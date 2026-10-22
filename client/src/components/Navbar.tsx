@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Mail, Menu, Phone, X } from 'lucide-react';
+import { Mail, Phone } from 'lucide-react';
 import Logo from './Logo';
 import { navLinks, site } from '@/data/site';
 
@@ -11,6 +11,8 @@ export default function Navbar() {
   const isHome = pathname === '/';
   // Transparent over the home banner (phones and desktop); solid white once scrolled or on other pages.
   const solid = scrolled || !isHome;
+  // White logo text/toggle only while sitting over the banner with the menu closed
+  const overBanner = !solid && !open;
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -31,15 +33,19 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`top-0 z-50 border-b transition-all duration-300 ${isHome ? 'fixed inset-x-0' : 'sticky'} ${
-          solid
+        className={`top-0 border-b transition-all duration-300 ${open ? 'z-[70]' : 'z-50'} ${
+          isHome ? 'fixed inset-x-0' : 'sticky'
+        } ${
+          open
+            ? 'border-transparent bg-transparent'
+            : solid
             ? // Liquid glass: see-through white, heavy blur + colour boost, bright top edge and soft shadow
               'border-white/50 bg-gradient-to-b from-white/70 to-white/45 shadow-[0_8px_32px_rgba(14,21,70,0.12),inset_0_1px_0_rgba(255,255,255,0.9),inset_0_-1px_0_rgba(255,255,255,0.35)] backdrop-blur-2xl backdrop-saturate-[1.8]'
             : 'border-transparent bg-transparent'
         }`}
       >
         <nav className="container-x flex h-20 items-center justify-between gap-4" aria-label="Main">
-          <Logo variant={solid ? 'dark' : 'mobile-light'} />
+          <Logo variant={overBanner ? 'mobile-light' : 'dark'} onClick={() => setOpen(false)} />
 
           <ul className="hidden items-center gap-1 lg:flex">
             {navLinks.map((link) => (
@@ -74,17 +80,18 @@ export default function Navbar() {
             </Link>
           </div>
 
+          {/* Animated toggle: three bars fold into an X and the button rotates */}
           <button
             type="button"
-            className={`grid size-11 shrink-0 place-items-center rounded-xl border transition lg:hidden ${
-              solid ? 'border-slate-200 text-navy-900' : 'border-white/40 bg-white/10 text-white backdrop-blur'
-            }`}
-            onClick={() => setOpen(true)}
+            className={`menu-toggle lg:hidden ${overBanner ? 'text-white' : 'text-navy-900'}`}
+            onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label="Open menu"
+            aria-label={open ? 'Close menu' : 'Open menu'}
           >
-            <Menu className="size-5" />
+            <span className="bars bar1" />
+            <span className="bars bar2" />
+            <span className="bars bar3" />
           </button>
         </nav>
       </header>
@@ -108,17 +115,8 @@ export default function Navbar() {
           }`}
           aria-label="Mobile menu"
         >
-          <div className="flex h-20 shrink-0 items-center justify-between border-b border-slate-100 px-4 sm:px-6">
-            <Logo onClick={() => setOpen(false)} />
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-              className="grid size-10 shrink-0 place-items-center rounded-xl border border-slate-200 text-navy-900"
-            >
-              <X className="size-5" />
-            </button>
-          </div>
+          {/* Space for the navbar, which stays on top while the menu is open */}
+          <div className="h-20 shrink-0 border-b border-slate-100" />
 
           <ul className="flex flex-col gap-1 overflow-y-auto p-4">
             {navLinks.map((link) => (

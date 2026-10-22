@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import HeroSlider from '@/components/HeroSlider';
 import CountUp from '@/components/CountUp';
+import ToolDecor from '@/components/ToolDecor';
 import Reveal from '@/components/Reveal';
 import SectionHeading from '@/components/SectionHeading';
 import ServiceCard from '@/components/ServiceCard';
@@ -79,20 +80,28 @@ export default function Home() {
       </section>
 
       {/* SERVICES */}
-      <section className="section bg-slate-50">
-        <div className="container-x">
+      {/* overflow-clip (not hidden) so the sticky cards still work */}
+      <section className="section relative overflow-clip bg-slate-50">
+        <ToolDecor variant="a" />
+        <div className="container-x relative">
           <SectionHeading
             eyebrow="Our Services"
             title="Complete technical services under one roof"
             subtitle="Seven specialist services covering the full building services package for new homes, offices and fit-outs."
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {/* Phones: stacked-card scroll — each card sticks under the navbar and the next one slides up over it */}
             {services.map((s, i) => (
-              <Reveal key={s.slug} delay={(i % 4) * 80}>
-                <ServiceCard service={s} index={i} />
-              </Reveal>
+              <div key={s.slug} className="max-sm:sticky" style={{ top: `calc(6rem + ${i * 12}px)` }}>
+                <Reveal delay={(i % 4) * 80} className="h-full">
+                  <div className="h-full rounded-2xl max-sm:shadow-[0_-8px_30px_rgba(14,21,70,0.12)]">
+                    <ServiceCard service={s} index={i} />
+                  </div>
+                </Reveal>
+              </div>
             ))}
-            <Reveal delay={240}>
+            <div className="max-sm:sticky" style={{ top: `calc(6rem + ${services.length * 12}px)` }}>
+            <Reveal delay={240} className="h-full">
               <Link
                 to="/contact"
                 className="group flex h-full flex-col justify-between rounded-2xl bg-navy-900 p-7 text-white transition hover:-translate-y-1 hover:bg-navy-800"
@@ -108,13 +117,15 @@ export default function Home() {
                 </span>
               </Link>
             </Reveal>
+            </div>
           </div>
         </div>
       </section>
 
       {/* WHY US */}
-      <section className="section">
-        <div className="container-x grid items-center gap-14 lg:grid-cols-2">
+      <section className="section relative overflow-hidden">
+        <ToolDecor variant="c" />
+        <div className="container-x relative grid items-center gap-14 lg:grid-cols-2">
           <Reveal>
             <SectionHeading
               align="left"
@@ -148,6 +159,7 @@ export default function Home() {
       {/* PROCESS */}
       <section className="section relative overflow-hidden bg-navy-900">
         <div className="pointer-events-none absolute inset-0 bg-grid" />
+        <ToolDecor variant="b" light />
         <div className="container-x relative">
           <SectionHeading
             light
@@ -176,8 +188,9 @@ export default function Home() {
       </section>
 
       {/* PROJECTS */}
-      <section className="section">
-        <div className="container-x">
+      <section className="section relative overflow-hidden">
+        <ToolDecor variant="a" />
+        <div className="container-x relative">
           <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
             <SectionHeading
               align="left"

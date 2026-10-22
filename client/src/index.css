@@ -3,7 +3,18 @@
 @theme {
   /* Same bold serif as the "AL SAFRAN" lettering in the logo */
   --font-brand: 'Tinos', 'Times New Roman', Times, serif;
-  --font-sans:'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Technical look: angular industrial headings + clean engineering body text */
+  --font-display: 'Rajdhani', 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Barlow', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --animate-spin-slow: spin 18s linear infinite;
+  --animate-spin-slow-reverse: spin-reverse 24s linear infinite;
+
+  @keyframes spin-reverse {
+    to {
+      transform: rotate(-360deg);
+    }
+  }
 
   /* Logo blue — primary accent */
   --color-brand-50: #eef6ff;
@@ -58,13 +69,13 @@
     overflow-x: clip;
   }
   body {
-    @apply bg-white font-sans text-slate-600 antialiased;
+    @apply bg-white font-sans text-[1.0625rem] text-slate-600 antialiased;
   }
   h1,
   h2,
   h3,
   h4 {
-    @apply font-bold tracking-tight text-navy-900;
+    @apply font-display leading-[1.08] font-bold tracking-[0.005em] text-navy-900;
   }
   ::selection {
     @apply bg-brand-200 text-navy-900;
@@ -79,15 +90,11 @@
     @apply py-20 lg:py-28;
   }
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-600;
-  }
-  .eyebrow::before {
-    content: '';
-    @apply h-0.5 w-8 rounded-full bg-brand-500;
+    @apply inline-flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.22em] text-brand-600;
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-display text-base font-bold tracking-wide uppercase transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:cursor-not-allowed disabled:opacity-60;
   }
   /* Use together with .btn, e.g. className="btn btn-primary" */
   .btn-primary {
@@ -115,6 +122,28 @@
   .glass-tag::before {
     content: '';
     @apply pointer-events-none absolute inset-x-0 top-0 -z-10 h-1/2 rounded-t-full bg-gradient-to-b from-white/50 to-transparent;
+  }
+
+  /* Animated menu toggle (based on Uiverse.io by vinodjangid07) — state comes from aria-expanded */
+  .menu-toggle {
+    @apply relative flex size-[30px] shrink-0 cursor-pointer flex-col items-center justify-center gap-[7px] rounded-md duration-300 outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-4;
+  }
+  .menu-toggle .bars {
+    @apply h-[3px] w-full rounded-[5px] bg-current duration-300;
+  }
+  .menu-toggle[aria-expanded='true'] {
+    transform: rotate(-90deg);
+  }
+  /* Bars are 10px apart (3px bar + 7px gap) */
+  .menu-toggle[aria-expanded='true'] .bar1 {
+    transform: translateY(20px) rotate(-60deg);
+    transform-origin: left;
+    z-index: 1;
+  }
+  .menu-toggle[aria-expanded='true'] .bar2 {
+    transform: translateY(10px) rotate(60deg);
+    transform-origin: right;
+    z-index: 2;
   }
 
   .card {
