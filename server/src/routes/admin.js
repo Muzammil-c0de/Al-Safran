@@ -1,37 +1,12 @@
 import { Router } from 'express';
-import multer from 'multer';
 import rateLimit from 'express-rate-limit';
 import { sql, requireDb } from '../db.js';
 import { checkLogin, createSession, fixedLogin, hashPassword, requireAdmin, verifyPassword } from '../auth.js';
-import {
-  uploadFile,
-  deleteObject,
-  ALLOWED_IMAGE_TYPES,
-  ALLOWED_MEDIA_TYPES,
-  FILE_TYPES,
-  MAX_IMAGE_BYTES,
-  MAX_VIDEO_BYTES,
-} from '../r2.js';
+import { createUploadUrl, deleteObject, verifyUpload } from '../r2.js';
+
+// Files are uploaded by the browser straight to R2 (POST /uploads gives the link); these routes only save records.
 
 const router = Router();
-
-const badRequest = (msg) => Object.assign(new Error(msg), { status: 400 });
-
-const imageUpload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_IMAGE_BYTES },
-  fileFilter: (req, file, cb) =>
-    ALLOWED_IMAGE_TYPES.includes(file.mimetype) ? cb(null, true) : cb(badRequest('Only JPG, PNG, WEBP or AVIF images are allowed.')),
-});
-
-const mediaUpload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_VIDEO_BYTES },
-  fileFilter: (req, file, cb) =>
-    ALLOWED_MEDIA_TYPES.includes(file.mimetype)
-      ? cb(null, true)
-      : cb(badRequest('Allowed files: JPG, PNG, WEBP, AVIF images or MP4, WEBM, MOV videos.')),
-});
 
 const id = (req) => Number(req.params.id);
 
@@ -57,6 +32,19 @@ router.post('/login', rateLimit({ windowMs: 15 * 60 * 1000, limit: 10 }), async 
 router.use(requireAdmin);
 
 router.get('/me', (req, res) => res.json({ username: req.admin.username, fixed: fixedLogin() }));
+
+/**
+ * Step 1 of every upload: { folder, contentType, size } → { key, uploadUrl }.
+ * The browser then PUTs the file to uploadUrl (straight into R2) and sends `key` with the record.
+ */
+router.post('/uploads', async (req, res, next) => {
+  try {
+    const { folder, contentType, size } = req.body || {};
+    res.json(await createUploadUrl({ folder: String(folder), contentType: String(contentType), size: Number(size) }));
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.use(requireDb);
 
@@ -126,7 +114,8 @@ router.delete('/messages/:id', async (req, res, next) => {
 
 // ---------------- Projects ----------------
 
-router.post('/projects', imageUpload.single('image'), async (req, res, next) => {
+// Body (JSON): title, category, location, description, completed_on, image_key (from POST /uploads, optional)
+router.post('/projects', async (req, res, next) => {
   try {
     const title = (req.body.title || '').trim().slice(0, 200);
     const category = (req.body.category || '').trim().slice(0, 120);
@@ -137,7 +126,10 @@ router.post('/projects', imageUpload.single('image'), async (req, res, next) => 
     if (!title || !category) return res.status(400).json({ error: 'Title and category are required.' });
 
     let image = { key: null, url: null };
-    if (req.file) image = await uploadFile(req.file, 'projects');
+    if (req.body.image_key) {
+      image = await verifyUpload(req.body.image_key, ['projects']);
+      if (image.kind !== 'image') return res.status(400).json({ error: 'The project photo must be an image.' });
+    }
 
     const [row] = await sql`
       INSERT INTO projects (title, category, location, description, image_key, image_url, completed_on)
@@ -171,18 +163,15 @@ router.get('/media', async (req, res, next) => {
   }
 });
 
-router.post('/media', mediaUpload.single('file'), async (req, res, next) => {
+// Body (JSON): file_key (from POST /uploads), title
+router.post('/media', async (req, res, next) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'Choose an image or video to upload.' });
-    const kind = FILE_TYPES[req.file.mimetype].kind;
-    if (kind === 'image' && req.file.size > MAX_IMAGE_BYTES) {
-      return res.status(400).json({ error: 'Images must be under 10 MB.' });
-    }
-    const title = (req.body.title || '').trim().slice(0, 200) || null;
-    const file = await uploadFile(req.file, kind === 'video' ? 'videos' : 'images');
+    if (!req.body.file_key) return res.status(400).json({ error: 'Choose an image or video to upload.' });
+    const file = await verifyUpload(req.body.file_key, ['images', 'videos']);
+    const title = String(req.body.title || '').trim().slice(0, 200) || null;
     const [row] = await sql`
       INSERT INTO media (kind, title, file_key, url, mime_type, size_bytes)
-      VALUES (${kind}, ${title}, ${file.key}, ${file.url}, ${req.file.mimetype}, ${req.file.size})
+      VALUES (${file.kind}, ${title}, ${file.key}, ${file.url}, ${file.mime}, ${file.size})
       RETURNING *
     `;
     res.status(201).json(row);

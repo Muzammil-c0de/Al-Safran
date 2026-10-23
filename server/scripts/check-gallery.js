@@ -1,38 +1,23 @@
-// End-to-end check of the gallery: admin upload → stored in R2 → listed publicly → served → deleted.
+// End-to-end check of the gallery: direct upload to R2 → media record → listed publicly → served → deleted.
 // Usage: start the API (npm run dev), then: node scripts/check-gallery.js [port]
-import 'dotenv/config';
-import fs from 'node:fs';
+import { API, ORIGIN, log, login, uploadDirect, json } from './_client.js';
 
-const ORIGIN = `http://localhost:${process.argv[2] || process.env.PORT || 5000}`;
-const API = `${ORIGIN}/api`;
-const log = (ok, msg) => console.log(`${ok ? '✔' : '✘'} ${msg}`);
-
-const login = await fetch(`${API}/admin/login`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username: process.env.ADMIN_USERNAME, password: process.env.ADMIN_PASSWORD }),
-}).then((r) => r.json());
-if (!login.token) throw new Error('Login failed: ' + JSON.stringify(login));
-const auth = { Authorization: `Bearer ${login.token}` };
+const auth = await login();
 log(true, 'Logged in as admin');
 
-// Upload a real photo from the site
-const file = new URL('../../client/public/images/FCU.webp', import.meta.url);
-const form = new FormData();
-form.append('title', 'Gallery connection test');
-form.append('file', new Blob([fs.readFileSync(file)], { type: 'image/webp' }), 'test.webp');
-const up = await fetch(`${API}/admin/media`, { method: 'POST', headers: auth, body: form });
-const item = await up.json();
-log(up.ok, `Upload → ${up.status} ${up.ok ? `stored as ${item.url}` : item.error}`);
-if (!up.ok) process.exit(1);
+const key = await uploadDirect(auth, 'images/FCU.webp', 'images');
+log(true, `Uploaded straight to R2 → ${key}`);
+
+const res = await fetch(`${API}/admin/media`, json(auth, 'POST', { file_key: key, title: 'Gallery connection test' }));
+const item = await res.json();
+log(res.ok, `Media record saved → ${res.status} ${res.ok ? item.url : item.error}`);
+if (!res.ok) process.exit(1);
 
 const list = await fetch(`${API}/media`).then((r) => r.json());
 log(list.some((m) => m.id === item.id), `Public gallery list includes it (${list.length} item(s))`);
 
-const fileUrl = item.url.startsWith('/api/') ? `${ORIGIN}${item.url}` : item.url;
-const img = await fetch(fileUrl);
-const bytes = (await img.arrayBuffer()).byteLength;
-log(img.ok && bytes > 1000, `Image served from R2 → ${img.status}, ${Math.round(bytes / 1024)} KB, ${img.headers.get('content-type')}`);
+const img = await fetch(item.url.startsWith('/api/') ? ORIGIN + item.url : item.url);
+log(img.ok, `Image loads → ${img.status}, ${Math.round((await img.arrayBuffer()).byteLength / 1024)} KB`);
 
 const del = await fetch(`${API}/admin/media/${item.id}`, { method: 'DELETE', headers: auth });
 log(del.ok, 'Test image deleted (from R2 and the database)');

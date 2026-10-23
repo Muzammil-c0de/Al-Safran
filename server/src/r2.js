@@ -1,4 +1,5 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import crypto from 'node:crypto';
 
 const { R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, R2_PUBLIC_URL } = process.env;
@@ -58,6 +59,48 @@ export async function uploadFile(file, folder) {
     })
   );
   return { key, url: publicUrl(key), kind: type.kind };
+}
+
+/** Folders the admin panel may upload into. */
+export const UPLOAD_FOLDERS = ['images', 'videos', 'projects', 'banners'];
+
+/**
+ * Direct upload: gives the browser a short-lived link to PUT one file straight into R2
+ * (so large videos never pass through the API — needed on Vercel, which caps request size).
+ */
+export async function createUploadUrl({ folder, contentType, size }) {
+  if (!client) throw Object.assign(new Error('Storage is not configured (R2 API token missing).'), { status: 503 });
+  const type = FILE_TYPES[contentType];
+  if (!type) throw Object.assign(new Error('Allowed files: JPG, PNG, WEBP, AVIF images or MP4, WEBM, MOV videos.'), { status: 400 });
+  if (!UPLOAD_FOLDERS.includes(folder)) throw Object.assign(new Error('Invalid upload folder.'), { status: 400 });
+  const max = type.kind === 'video' ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  if (!Number.isFinite(size) || size <= 0 || size > max) {
+    throw Object.assign(new Error(type.kind === 'video' ? 'Videos must be under 100 MB.' : 'Images must be under 10 MB.'), { status: 400 });
+  }
+  const key = `${folder}/${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${type.ext}`;
+  const uploadUrl = await getSignedUrl(client, new PutObjectCommand({ Bucket: R2_BUCKET, Key: key, ContentType: contentType }), {
+    expiresIn: 15 * 60,
+  });
+  return { key, uploadUrl, url: publicUrl(key), kind: type.kind };
+}
+
+/**
+ * Confirms a directly-uploaded file really exists in R2 (in an allowed folder) and returns its details.
+ * `folders` limits which folders are accepted for this record.
+ */
+export async function verifyUpload(key, folders) {
+  if (!client) throw Object.assign(new Error('Storage is not configured.'), { status: 503 });
+  const ok = typeof key === 'string' && /^[a-z]+\/[\w.-]+$/.test(key) && folders.includes(key.split('/')[0]);
+  if (!ok) throw Object.assign(new Error('Invalid file reference.'), { status: 400 });
+  try {
+    const head = await client.send(new HeadObjectCommand({ Bucket: R2_BUCKET, Key: key }));
+    const type = FILE_TYPES[head.ContentType];
+    if (!type) throw Object.assign(new Error('Uploaded file type is not allowed.'), { status: 400 });
+    return { key, url: publicUrl(key), mime: head.ContentType, size: Number(head.ContentLength || 0), kind: type.kind };
+  } catch (err) {
+    if (err.status) throw err;
+    throw Object.assign(new Error('The uploaded file was not found — please upload it again.'), { status: 400 });
+  }
 }
 
 /** Back-compat helper for project images. */

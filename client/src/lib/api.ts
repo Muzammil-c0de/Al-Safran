@@ -50,38 +50,76 @@ async function request<T>(path: string, { method = 'GET', body, token }: Request
   return data as T;
 }
 
-/**
- * Upload with progress (fetch can't report upload progress, so this uses XHR).
- * Used for images/videos in the admin media library.
- */
-function upload<T>(
-  path: string,
-  form: FormData,
-  token: string,
-  onProgress?: (pct: number) => void,
-  method: 'POST' | 'PATCH' = 'POST'
-): Promise<T> {
+/** PUTs a file straight into R2 using a signed link (XHR, because fetch can't report upload progress). */
+function putToStorage(uploadUrl: string, file: File, onProgress: (loaded: number) => void): Promise<void> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open(method, `${BASE}/api${path}`);
-    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100));
-    };
-    xhr.onload = () => {
-      let data: { error?: string } = {};
-      try {
-        data = JSON.parse(xhr.responseText);
-      } catch {
-        /* non-JSON response */
-      }
-      if (xhr.status >= 200 && xhr.status < 300) resolve(data as T);
-      else reject(new ApiError(data.error ?? `Upload failed (${xhr.status})`, xhr.status));
-    };
-    xhr.onerror = () => reject(new ApiError('Network error — check your connection and try again.', 0));
-    xhr.send(form);
+    xhr.open('PUT', uploadUrl);
+    xhr.setRequestHeader('Content-Type', file.type);
+    xhr.upload.onprogress = (e) => onProgress(e.loaded);
+    xhr.onload = () =>
+      xhr.status >= 200 && xhr.status < 300
+        ? resolve()
+        : reject(new ApiError(`Upload to storage failed (${xhr.status}). Check the R2 CORS settings.`, xhr.status));
+    xhr.onerror = () =>
+      reject(new ApiError('Could not reach file storage — check your connection, or the R2 bucket CORS settings.', 0));
+    xhr.send(file);
   });
 }
+
+/** Which form fields are files, the R2 folder they go in, and the name the API expects their key under. */
+type FileFields = Record<string, { folder: string | ((f: File) => string); keyName: string }>;
+
+/**
+ * Sends an admin form: every file in it is uploaded straight to R2 first (with overall progress),
+ * then the rest of the form + the new file keys are sent to the API as JSON.
+ */
+async function submitForm<T>(
+  path: string,
+  method: 'POST' | 'PATCH',
+  form: FormData,
+  token: string,
+  fileFields: FileFields,
+  onProgress?: (pct: number) => void
+): Promise<T> {
+  const body: Record<string, string> = {};
+  const files: { field: string; file: File }[] = [];
+  form.forEach((value, field) => {
+    if (value instanceof File) {
+      if (value.size > 0 && fileFields[field]) files.push({ field, file: value });
+    } else body[field] = value;
+  });
+
+  const total = files.reduce((n, f) => n + f.file.size, 0) || 1;
+  const loaded: Record<string, number> = {};
+  const report = () => onProgress?.(Math.min(99, Math.round((Object.values(loaded).reduce((a, b) => a + b, 0) / total) * 100)));
+
+  for (const { field, file } of files) {
+    const spec = fileFields[field];
+    const folder = typeof spec.folder === 'function' ? spec.folder(file) : spec.folder;
+    const signed = await request<{ key: string; uploadUrl: string }>('/admin/uploads', {
+      method: 'POST',
+      body: { folder, contentType: file.type, size: file.size },
+      token,
+    });
+    await putToStorage(signed.uploadUrl, file, (n) => {
+      loaded[field] = n;
+      report();
+    });
+    body[spec.keyName] = signed.key;
+  }
+
+  const result = await request<T>(path, { method, body, token });
+  onProgress?.(100);
+  return result;
+}
+
+const PROJECT_FILES: FileFields = { image: { folder: 'projects', keyName: 'image_key' } };
+const MEDIA_FILES: FileFields = { file: { folder: (f) => (f.type.startsWith('video/') ? 'videos' : 'images'), keyName: 'file_key' } };
+const BANNER_FILES: FileFields = {
+  desktop: { folder: 'banners', keyName: 'desktop_key' },
+  mobile: { folder: 'banners', keyName: 'mobile_key' },
+};
 
 export const api = {
   health: () => request<{ ok: boolean; database: boolean; storage: boolean }>('/health'),
@@ -103,22 +141,22 @@ export const api = {
       request<{ ok: true }>(`/admin/messages/${id}`, { method: 'PATCH', body: { is_read: isRead }, token }),
     deleteMessage: (token: string, id: number) => request<{ ok: true }>(`/admin/messages/${id}`, { method: 'DELETE', token }),
 
-    createProject: (token: string, form: FormData) => request<Project>('/admin/projects', { method: 'POST', body: form, token }),
+    createProject: (token: string, form: FormData) => submitForm<Project>('/admin/projects', 'POST', form, token, PROJECT_FILES),
     deleteProject: (token: string, id: Project['id']) =>
       request<{ ok: true }>(`/admin/projects/${id}`, { method: 'DELETE', token }),
 
     media: (token: string) => request<MediaItem[]>('/admin/media', { token }).then(withFileUrls),
     uploadMedia: (token: string, form: FormData, onProgress?: (pct: number) => void) =>
-      upload<MediaItem>('/admin/media', form, token, onProgress).then((m) => withFileUrls([m])[0]),
+      submitForm<MediaItem>('/admin/media', 'POST', form, token, MEDIA_FILES, onProgress).then((m) => withFileUrls([m])[0]),
     renameMedia: (token: string, id: number, title: string) =>
       request<MediaItem>(`/admin/media/${id}`, { method: 'PATCH', body: { title }, token }).then((m) => withFileUrls([m])[0]),
     deleteMedia: (token: string, id: number) => request<{ ok: true }>(`/admin/media/${id}`, { method: 'DELETE', token }),
 
     banners: (token: string) => request<Banner[]>('/admin/banners', { token }).then((rows) => rows.map(bannerUrls)),
     createBanner: (token: string, form: FormData, onProgress?: (pct: number) => void) =>
-      upload<Banner>('/admin/banners', form, token, onProgress).then(bannerUrls),
+      submitForm<Banner>('/admin/banners', 'POST', form, token, BANNER_FILES, onProgress).then(bannerUrls),
     updateBanner: (token: string, id: number, form: FormData, onProgress?: (pct: number) => void) =>
-      upload<Banner>(`/admin/banners/${id}`, form, token, onProgress, 'PATCH').then(bannerUrls),
+      submitForm<Banner>(`/admin/banners/${id}`, 'PATCH', form, token, BANNER_FILES, onProgress).then(bannerUrls),
     moveBanner: (token: string, id: number, direction: 'up' | 'down') =>
       request<Banner[]>(`/admin/banners/${id}/move`, { method: 'POST', body: { direction }, token }).then((rows) => rows.map(bannerUrls)),
     deleteBanner: (token: string, id: number) => request<{ ok: true }>(`/admin/banners/${id}`, { method: 'DELETE', token }),

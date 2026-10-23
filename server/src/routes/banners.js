@@ -1,20 +1,18 @@
 import { Router } from 'express';
-import multer from 'multer';
 import { sql, requireDb } from '../db.js';
 import { requireAdmin } from '../auth.js';
-import { uploadFile, deleteObject, ALLOWED_IMAGE_TYPES, MAX_IMAGE_BYTES } from '../r2.js';
+import { deleteObject, verifyUpload } from '../r2.js';
 
-const badRequest = (msg) => Object.assign(new Error(msg), { status: 400 });
+// Banner images are uploaded by the browser straight to R2 (POST /api/admin/uploads, folder "banners");
+// these routes receive their keys as `desktop_key` / `mobile_key`.
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: MAX_IMAGE_BYTES },
-  fileFilter: (req, file, cb) =>
-    ALLOWED_IMAGE_TYPES.includes(file.mimetype) ? cb(null, true) : cb(badRequest('Banners must be JPG, PNG, WEBP or AVIF images.')),
-}).fields([
-  { name: 'desktop', maxCount: 1 },
-  { name: 'mobile', maxCount: 1 },
-]);
+/** Checks an uploaded banner image key; returns null when not given. */
+async function bannerImage(key) {
+  if (!key) return null;
+  const file = await verifyUpload(key, ['banners']);
+  if (file.kind !== 'image') throw Object.assign(new Error('Banners must be images.'), { status: 400 });
+  return file;
+}
 
 const text = (v, max) => {
   const s = String(v ?? '').trim().slice(0, max);
@@ -59,19 +57,15 @@ adminBanners.get('/', async (req, res, next) => {
   }
 });
 
-adminBanners.post('/', upload, async (req, res, next) => {
-  const uploaded = [];
+adminBanners.post('/', async (req, res, next) => {
+  const uploaded = [req.body.desktop_key, req.body.mobile_key].filter(Boolean);
   try {
-    const desktop = req.files?.desktop?.[0];
-    const mobile = req.files?.mobile?.[0];
     const title = text(req.body.title, 160);
     if (!title) return res.status(400).json({ error: 'Add a heading for the banner.' });
-    if (!desktop) return res.status(400).json({ error: 'Choose the desktop banner image.' });
+    if (!req.body.desktop_key) return res.status(400).json({ error: 'Choose the desktop banner image.' });
 
-    const d = await uploadFile(desktop, 'banners');
-    uploaded.push(d.key);
-    const m = mobile ? await uploadFile(mobile, 'banners') : null;
-    if (m) uploaded.push(m.key);
+    const d = await bannerImage(req.body.desktop_key);
+    const m = await bannerImage(req.body.mobile_key);
 
     const [{ next: order }] = await sql`SELECT COALESCE(MAX(sort_order), 0) + 1 AS next FROM banners`;
     const [row] = await sql`
@@ -88,7 +82,7 @@ adminBanners.post('/', upload, async (req, res, next) => {
   }
 });
 
-adminBanners.patch('/:id', upload, async (req, res, next) => {
+adminBanners.patch('/:id', async (req, res, next) => {
   try {
     const id = Number(req.params.id);
     const [current] = await sql`SELECT * FROM banners WHERE id = ${id}`;
@@ -96,12 +90,10 @@ adminBanners.patch('/:id', upload, async (req, res, next) => {
 
     const b = req.body;
     const has = (k) => Object.prototype.hasOwnProperty.call(b, k);
-    const desktop = req.files?.desktop?.[0];
-    const mobile = req.files?.mobile?.[0];
-    const removeMobile = b.remove_mobile === 'true';
+    const removeMobile = String(b.remove_mobile) === 'true';
 
-    const d = desktop ? await uploadFile(desktop, 'banners') : null;
-    const m = mobile ? await uploadFile(mobile, 'banners') : null;
+    const d = await bannerImage(b.desktop_key);
+    const m = await bannerImage(b.mobile_key);
 
     const title = has('title') ? text(b.title, 160) : current.title;
     if (!title) return res.status(400).json({ error: 'The banner needs a heading.' });

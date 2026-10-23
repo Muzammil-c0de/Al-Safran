@@ -1,6 +1,7 @@
 {
   "name": "al-safran",
   "private": true,
+  "type": "module",
   "workspaces": [
     "client",
     "server"
