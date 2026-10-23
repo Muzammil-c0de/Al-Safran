@@ -1,0 +1,35 @@
+# Render Blueprint for the Al Safran API (server/ folder).
+# Render dashboard → New → Blueprint → pick this GitHub repo. It reads this file and creates the service.
+# Secret values marked `sync: false` are entered in the Render dashboard (copy them from server/.env).
+services:
+  - type: web
+    name: alsafran-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: CORS_ORIGIN
+        value: https://alsafran.tech,https://www.alsafran.tech,https://al-safran.vercel.app
+      - key: R2_BUCKET
+        value: alsafran
+      - key: R2_ACCOUNT_ID
+        value: b80e4f5d1cdd6e428dae109a59c46cfe
+      - key: R2_PUBLIC_URL
+        value: ""
+      - key: DATABASE_URL
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
