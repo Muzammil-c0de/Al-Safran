@@ -1,23 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '@/lib/api';
-import { sampleProjects } from '@/data/sampleProjects';
 import type { Project } from '@/types';
 
+/** Projects added from the admin panel (Admin → Projects). */
 export function useProjects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isSample, setIsSample] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await api.getProjects();
-      const hasReal = data.length > 0;
-      setProjects(hasReal ? data : sampleProjects);
-      setIsSample(!hasReal);
+      setProjects(await api.getProjects());
     } catch {
-      setProjects(sampleProjects);
-      setIsSample(true);
+      setProjects([]);
     } finally {
       setLoading(false);
     }
@@ -27,5 +22,5 @@ export function useProjects() {
     void load();
   }, [load]);
 
-  return { projects, loading, isSample, reload: load };
+  return { projects, loading, reload: load };
 }

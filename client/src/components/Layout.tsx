@@ -17,10 +17,8 @@ export default function Layout() {
       // Skip on data-saver connections
       const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
       if (conn?.saveData) return;
-      // Phones get the small banner copies (and the phone version of the 2nd home slide)
-      const files = isPhone
-        ? [...PAGE_BANNERS.map(smallBanner), '/banner2mobile.webp']
-        : [...PAGE_BANNERS, '/banner2.webp'];
+      // Phones get the small banner copies
+      const files = isPhone ? PAGE_BANNERS.map(smallBanner) : PAGE_BANNERS;
       files.forEach((p) => {
         const img = new Image();
         img.decoding = 'async';

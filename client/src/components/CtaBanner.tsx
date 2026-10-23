@@ -22,7 +22,7 @@ export default function CtaBanner() {
               <Link to="/contact" className="btn bg-navy-900 text-white hover:-translate-y-0.5 hover:bg-navy-950">
                 Get a Free Quote <ArrowRight className="size-4" />
               </Link>
-              <a href={site.phoneHref} className="btn btn-outline-light">
+              <a href={site.call.href} className="btn btn-outline-light">
                 <Phone className="size-4" /> Call Us
               </a>
             </div>

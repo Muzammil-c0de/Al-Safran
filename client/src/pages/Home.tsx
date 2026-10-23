@@ -178,7 +178,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PROJECTS */}
+      {/* PROJECTS — only shown once projects have been added in the admin panel */}
+      {projects.length > 0 && (
       <section className="section relative overflow-hidden">
         <ToolDecor variant="a" />
         <div className="container-x relative">
@@ -202,6 +203,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
 
       <CtaBanner />
     </>

@@ -10,9 +10,11 @@ export const site = {
 
   phone: '04-236 7095',
   phoneHref: 'tel:+97142367095',
+  /** Number every "Call us" button dials */
+  call: { label: '055-890 8664', href: 'tel:+971558908664' },
   mobiles: [
     { label: '055-890 8664', href: 'tel:+971558908664' },
-    { label: '050-676 1036', href: 'tel:+971506761036' },
+    { label: '054-313 0666', href: 'tel:+971543130666' },
   ],
   whatsapp: '971558908664', // +971 55 890 8664 — digits only; leave empty to hide the WhatsApp button
   email: 'mail2alsafran@gmail.com',

@@ -1,1 +1,1 @@
-export type AdminTab = 'dashboard' | 'messages' | 'projects' | 'media' | 'settings';
+export type AdminTab = 'dashboard' | 'messages' | 'banners' | 'projects' | 'media' | 'settings';

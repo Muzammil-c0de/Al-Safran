@@ -1,20 +1,25 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Images, Play, X } from 'lucide-react';
 import { api } from '@/lib/api';
 import type { MediaItem } from '@/types';
 import SectionHeading from './SectionHeading';
 import Reveal from './Reveal';
 
-/** Public gallery of images and videos uploaded from the admin panel. Hidden when there's nothing to show. */
-export default function Gallery() {
+/**
+ * Public gallery of images and videos uploaded in Admin → Media library.
+ * `embedded` = shown as the Projects page's Gallery tab (no section heading, shows a message when empty).
+ */
+export default function Gallery({ embedded = false }: { embedded?: boolean }) {
   const [items, setItems] = useState<MediaItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<number | null>(null);
 
   useEffect(() => {
     api
       .getMedia()
       .then(setItems)
-      .catch(() => setItems([]));
+      .catch(() => setItems([]))
+      .finally(() => setLoading(false));
   }, []);
 
   // Keyboard: Esc closes, arrows move
@@ -33,15 +38,30 @@ export default function Gallery() {
     };
   }, [open, items.length]);
 
-  if (items.length === 0) return null;
+  if (embedded && loading) {
+    return (
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="aspect-square animate-pulse rounded-2xl bg-slate-200" />
+        ))}
+      </div>
+    );
+  }
+  if (items.length === 0) {
+    return embedded ? (
+      <div className="mx-auto max-w-md py-6 text-center">
+        <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+          <Images className="size-7" />
+        </span>
+        <p className="mt-4 font-display text-2xl font-bold text-navy-900">Gallery coming soon</p>
+        <p className="mt-2 text-slate-500">Photos and videos of our work will appear here.</p>
+      </div>
+    ) : null;
+  }
   const current = open !== null ? items[open] : null;
 
-  return (
-    <section className="section bg-slate-50">
-      <div className="container-x">
-        <SectionHeading eyebrow="Gallery" title="Our work in pictures & video" subtitle="A look at our team on site — installations, ducting, maintenance and more." />
-
-        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+  const grid = (
+        <div className={`${embedded ? '' : 'mt-12'} grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4`}>
           {items.map((m, i) => (
             <Reveal key={m.id} delay={(i % 4) * 60} className={i % 7 === 0 ? 'col-span-2 row-span-2' : ''}>
               <button
@@ -70,10 +90,9 @@ export default function Gallery() {
             </Reveal>
           ))}
         </div>
-      </div>
+  );
 
-      {/* Lightbox */}
-      {current && (
+  const lightbox = current && (
         <div className="fixed inset-0 z-[80] grid place-items-center bg-navy-950/90 p-4 backdrop-blur-sm" onClick={() => setOpen(null)} role="dialog" aria-modal="true">
           <button onClick={() => setOpen(null)} className="absolute top-4 right-4 grid size-11 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20" aria-label="Close">
             <X className="size-6" />
@@ -111,7 +130,24 @@ export default function Gallery() {
             {current.title && <figcaption className="mt-3 text-center font-display text-lg font-semibold text-white">{current.title}</figcaption>}
           </figure>
         </div>
-      )}
+  );
+
+  if (embedded) {
+    return (
+      <>
+        {grid}
+        {lightbox}
+      </>
+    );
+  }
+
+  return (
+    <section className="section bg-slate-50">
+      <div className="container-x">
+        <SectionHeading eyebrow="Gallery" title="Our work in pictures & video" subtitle="A look at our team on site — installations, ducting, maintenance and more." />
+        {grid}
+      </div>
+      {lightbox}
     </section>
   );
 }

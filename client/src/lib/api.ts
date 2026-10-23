@@ -1,6 +1,21 @@
-import type { AdminStats, ContactMessage, ContactPayload, MediaItem, Project } from '@/types';
+import type { AdminStats, Banner, ContactMessage, ContactPayload, MediaItem, Project } from '@/types';
 
 const BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '');
+
+/**
+ * Files stored in R2 are served by the API at "/api/files/…". When the API runs on another domain
+ * (VITE_API_URL), those paths need the API's address in front so the website can load them.
+ */
+export const fileUrl = (url: string | null) => (url && url.startsWith('/api/') ? `${BASE}${url}` : url);
+
+const withFileUrls = <T extends { url?: string; image_url?: string | null }>(rows: T[]) =>
+  rows.map((r) => ({
+    ...r,
+    ...(r.url !== undefined ? { url: fileUrl(r.url) as string } : {}),
+    ...(r.image_url !== undefined ? { image_url: fileUrl(r.image_url) } : {}),
+  }));
+
+const bannerUrls = (b: Banner): Banner => ({ ...b, desktop_url: fileUrl(b.desktop_url) as string, mobile_url: fileUrl(b.mobile_url) });
 
 export class ApiError extends Error {
   constructor(
@@ -39,10 +54,16 @@ async function request<T>(path: string, { method = 'GET', body, token }: Request
  * Upload with progress (fetch can't report upload progress, so this uses XHR).
  * Used for images/videos in the admin media library.
  */
-function upload<T>(path: string, form: FormData, token: string, onProgress?: (pct: number) => void): Promise<T> {
+function upload<T>(
+  path: string,
+  form: FormData,
+  token: string,
+  onProgress?: (pct: number) => void,
+  method: 'POST' | 'PATCH' = 'POST'
+): Promise<T> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${BASE}/api${path}`);
+    xhr.open(method, `${BASE}/api${path}`);
     xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100));
@@ -64,8 +85,9 @@ function upload<T>(path: string, form: FormData, token: string, onProgress?: (pc
 
 export const api = {
   health: () => request<{ ok: boolean; database: boolean; storage: boolean }>('/health'),
-  getProjects: () => request<Project[]>('/projects'),
-  getMedia: () => request<MediaItem[]>('/media'),
+  getProjects: () => request<Project[]>('/projects').then(withFileUrls),
+  getMedia: () => request<MediaItem[]>('/media').then(withFileUrls),
+  getBanners: () => request<Banner[]>('/banners').then((rows) => rows.map(bannerUrls)),
   sendContact: (payload: ContactPayload) => request<{ ok: true }>('/contact', { method: 'POST', body: payload }),
 
   admin: {
@@ -85,11 +107,20 @@ export const api = {
     deleteProject: (token: string, id: Project['id']) =>
       request<{ ok: true }>(`/admin/projects/${id}`, { method: 'DELETE', token }),
 
-    media: (token: string) => request<MediaItem[]>('/admin/media', { token }),
+    media: (token: string) => request<MediaItem[]>('/admin/media', { token }).then(withFileUrls),
     uploadMedia: (token: string, form: FormData, onProgress?: (pct: number) => void) =>
-      upload<MediaItem>('/admin/media', form, token, onProgress),
+      upload<MediaItem>('/admin/media', form, token, onProgress).then((m) => withFileUrls([m])[0]),
     renameMedia: (token: string, id: number, title: string) =>
-      request<MediaItem>(`/admin/media/${id}`, { method: 'PATCH', body: { title }, token }),
+      request<MediaItem>(`/admin/media/${id}`, { method: 'PATCH', body: { title }, token }).then((m) => withFileUrls([m])[0]),
     deleteMedia: (token: string, id: number) => request<{ ok: true }>(`/admin/media/${id}`, { method: 'DELETE', token }),
+
+    banners: (token: string) => request<Banner[]>('/admin/banners', { token }).then((rows) => rows.map(bannerUrls)),
+    createBanner: (token: string, form: FormData, onProgress?: (pct: number) => void) =>
+      upload<Banner>('/admin/banners', form, token, onProgress).then(bannerUrls),
+    updateBanner: (token: string, id: number, form: FormData, onProgress?: (pct: number) => void) =>
+      upload<Banner>(`/admin/banners/${id}`, form, token, onProgress, 'PATCH').then(bannerUrls),
+    moveBanner: (token: string, id: number, direction: 'up' | 'down') =>
+      request<Banner[]>(`/admin/banners/${id}/move`, { method: 'POST', body: { direction }, token }).then((rows) => rows.map(bannerUrls)),
+    deleteBanner: (token: string, id: number) => request<{ ok: true }>(`/admin/banners/${id}`, { method: 'DELETE', token }),
   },
 };

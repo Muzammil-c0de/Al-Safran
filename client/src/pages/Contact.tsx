@@ -61,14 +61,15 @@ export default function Contact() {
       setServerError(
         err instanceof ApiError && err.status < 500 && err.status !== 503
           ? err.message
-          : `We couldn't send your message right now. Please call us on ${site.phone} or email ${site.email}.`
+          : `We couldn't send your message right now. Please call us on ${site.call.label} or email ${site.email}.`
       );
     }
   };
 
   const contactItems: { icon: typeof Phone; label: string; value: string; href?: string }[] = [
-    { icon: Phone, label: 'Office telephone', value: site.phone, href: site.phoneHref },
+    // Mobiles first (055-890 8664 at the top), then the office line
     ...site.mobiles.map((m) => ({ icon: Smartphone, label: 'Mobile', value: m.label, href: m.href })),
+    { icon: Phone, label: 'Office telephone', value: site.phone, href: site.phoneHref },
     { icon: Mail, label: 'Email us', value: site.email, href: `mailto:${site.email}` },
     { icon: MapPin, label: 'Address', value: site.address },
     { icon: Clock, label: 'Service', value: site.hours },

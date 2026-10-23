@@ -6,6 +6,7 @@ import {
   EyeOff,
   FolderKanban,
   Images,
+  GalleryHorizontalEnd,
   Inbox,
   LayoutDashboard,
   Loader2,
@@ -21,6 +22,7 @@ import { api, ApiError } from '@/lib/api';
 import { useDocumentTitle } from '@/hooks/useDocumentTitle';
 import Dashboard from '@/components/admin/Dashboard';
 import Messages from '@/components/admin/Messages';
+import Banners from '@/components/admin/Banners';
 import Projects from '@/components/admin/Projects';
 import Media from '@/components/admin/Media';
 import Settings from '@/components/admin/Settings';
@@ -189,6 +191,7 @@ function Login({ onLogin }: { onLogin: (token: string, username: string) => void
 const NAV: { tab: AdminTab; label: string; icon: typeof Inbox }[] = [
   { tab: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { tab: 'messages', label: 'Messages', icon: Inbox },
+  { tab: 'banners', label: 'Home banners', icon: GalleryHorizontalEnd },
   { tab: 'projects', label: 'Projects', icon: FolderKanban },
   { tab: 'media', label: 'Media library', icon: Images },
   { tab: 'settings', label: 'Settings', icon: SettingsIcon },
@@ -329,6 +332,7 @@ function Panel({
         )}
         {tab === 'dashboard' && <Dashboard {...props} username={username} go={go} />}
         {tab === 'messages' && <Messages {...props} onChanged={refreshCounts} />}
+        {tab === 'banners' && <Banners {...props} />}
         {tab === 'projects' && <Projects {...props} onChanged={refreshCounts} />}
         {tab === 'media' && <Media {...props} onChanged={refreshCounts} />}
         {tab === 'settings' && <Settings {...props} username={username} fixedLogin={fixedLogin} />}

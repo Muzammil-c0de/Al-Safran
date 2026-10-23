@@ -50,6 +50,25 @@ await sql`
   )
 `;
 
+// Home page slider banners (managed from Admin → Banners). Images live in R2.
+await sql`
+  CREATE TABLE IF NOT EXISTS banners (
+    id            SERIAL PRIMARY KEY,
+    eyebrow       TEXT,
+    title         TEXT NOT NULL,
+    subtitle      TEXT,
+    button_label  TEXT,
+    button_link   TEXT,
+    desktop_key   TEXT NOT NULL,
+    desktop_url   TEXT NOT NULL,
+    mobile_key    TEXT,
+    mobile_url    TEXT,
+    sort_order    INTEGER NOT NULL DEFAULT 0,
+    is_active     BOOLEAN NOT NULL DEFAULT true,
+    created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+  )
+`;
+
 await sql`
   CREATE TABLE IF NOT EXISTS admin_users (
     id             SERIAL PRIMARY KEY,

@@ -51,6 +51,21 @@ export interface MediaItem {
   created_at: string;
 }
 
+/** Home page slider banner (managed in Admin → Banners). */
+export interface Banner {
+  id: number;
+  eyebrow: string | null;
+  /** Words wrapped in *stars* are highlighted in blue */
+  title: string;
+  subtitle: string | null;
+  button_label: string | null;
+  button_link: string | null;
+  desktop_url: string;
+  mobile_url: string | null;
+  sort_order?: number;
+  is_active?: boolean;
+}
+
 export interface AdminStats {
   messages: number;
   unread: number;

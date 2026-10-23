@@ -140,7 +140,7 @@ export default function Projects({ token, onError, onChanged }: SectionProps & {
               <EmptyState
                 icon={<FolderKanban className="size-7" />}
                 title="No projects yet"
-                text="Until you add one, the website shows sample placeholder projects."
+                text="Projects you add here appear on the website's Projects page and in Recent Projects on the home page."
               />
             </div>
           ) : (

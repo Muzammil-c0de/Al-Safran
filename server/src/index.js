@@ -14,13 +14,16 @@ import contactRoutes from './routes/contact.js';
 import projectRoutes from './routes/projects.js';
 import adminRoutes from './routes/admin.js';
 import mediaRoutes from './routes/media.js';
+import fileRoutes from './routes/files.js';
+import { publicBanners, adminBanners } from './routes/banners.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.set('trust proxy', 1);
-app.use(helmet({ contentSecurityPolicy: false }));
+// cross-origin resource policy: lets the website (e.g. on Vercel) show images/videos served by this API
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim()) : true,
@@ -39,13 +42,16 @@ app.get('/api/health', async (req, res) => {
       database = false;
     }
   }
-  const storage = r2Configured && !/^your_/.test(process.env.R2_ACCOUNT_ID || '');
+  const storage = r2Configured;
   res.json({ ok: true, database, storage });
 });
 
 app.use('/api/contact', rateLimit({ windowMs: 15 * 60 * 1000, limit: 10 }), contactRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/media', mediaRoutes);
+app.use('/api/files', fileRoutes); // images/videos stored in R2
+app.use('/api/banners', publicBanners);
+app.use('/api/admin/banners', rateLimit({ windowMs: 15 * 60 * 1000, limit: 200 }), adminBanners);
 app.use('/api/admin', rateLimit({ windowMs: 15 * 60 * 1000, limit: 200 }), adminRoutes);
 
 app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }));
