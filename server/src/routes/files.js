@@ -27,7 +27,9 @@ router.get('/*', async (req, res, next) => {
   } catch (err) {
     if (err?.name === 'NoSuchKey' || err?.$metadata?.httpStatusCode === 404) return res.status(404).json({ error: 'Not found' });
     if (err?.$metadata?.httpStatusCode === 416) return res.status(416).end();
-    next(err);
+    // Log the real reason (visible in Vercel → Logs) and give a hint instead of a blank 500
+    console.error('R2 file read failed:', key, err?.name, err?.message);
+    res.status(502).json({ error: `Could not read the file from storage (${err?.name || 'error'}). Check the R2 settings.` });
   }
 });
 

@@ -1,4 +1,11 @@
-import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
+} from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import crypto from 'node:crypto';
 
@@ -105,6 +112,17 @@ export async function verifyUpload(key, folders) {
 
 /** Back-compat helper for project images. */
 export const uploadImage = (file, folder = 'projects') => uploadFile(file, folder);
+
+/** Real connection test (used by /api/health): lists one object. Returns null when OK, else the error name. */
+export async function storageProblem() {
+  if (!client) return 'NotConfigured';
+  try {
+    await client.send(new ListObjectsV2Command({ Bucket: R2_BUCKET, MaxKeys: 1 }));
+    return null;
+  } catch (err) {
+    return `${err.name || 'Error'}${err.$metadata?.httpStatusCode ? ` (${err.$metadata.httpStatusCode})` : ''}`;
+  }
+}
 
 /** Reads a file from R2 (optionally a byte range, for video seeking). */
 export async function getObject(key, range) {

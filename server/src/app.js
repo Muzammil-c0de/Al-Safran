@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 import { sql } from './db.js';
-import { r2Configured } from './r2.js';
+import { r2Configured, storageProblem } from './r2.js';
 import contactRoutes from './routes/contact.js';
 import projectRoutes from './routes/projects.js';
 import adminRoutes from './routes/admin.js';
@@ -37,7 +37,9 @@ app.get('/api/health', async (req, res) => {
       database = false;
     }
   }
-  res.json({ ok: true, database, storage: r2Configured });
+  // Real R2 test, so a wrong key/secret shows up here instead of as broken images
+  const storageError = r2Configured ? await storageProblem() : 'NotConfigured';
+  res.json({ ok: true, database, storage: !storageError, ...(storageError ? { storageError } : {}) });
 });
 
 const limit = (max) => rateLimit({ windowMs: 15 * 60 * 1000, limit: max });
