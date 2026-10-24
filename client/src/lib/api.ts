@@ -121,11 +121,22 @@ const BANNER_FILES: FileFields = {
   mobile: { folder: 'banners', keyName: 'mobile_key' },
 };
 
+let bannersRequest: Promise<Banner[]> | null = null;
+
 export const api = {
   health: () => request<{ ok: boolean; database: boolean; storage: boolean }>('/health'),
   getProjects: () => request<Project[]>('/projects').then(withFileUrls),
   getMedia: () => request<MediaItem[]>('/media').then(withFileUrls),
-  getBanners: () => request<Banner[]>('/banners').then((rows) => rows.map(bannerUrls)),
+  /** Home slider banners — fetched once per visit and shared (the intro screen preloads them, the slider shows them). */
+  getBanners: () => {
+    bannersRequest ??= request<Banner[]>('/banners')
+      .then((rows) => rows.map(bannerUrls))
+      .catch((err) => {
+        bannersRequest = null; // allow a retry later
+        throw err;
+      });
+    return bannersRequest;
+  },
   sendContact: (payload: ContactPayload) => request<{ ok: true }>('/contact', { method: 'POST', body: payload }),
 
   admin: {

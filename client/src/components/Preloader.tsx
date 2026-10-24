@@ -1,18 +1,53 @@
 import { useEffect, useState } from 'react';
 import { site } from '@/data/site';
+import { api } from '@/lib/api';
+import { smallBanner } from './PageHero';
 
 const MIN_TIME = 2200; // keep the intro on screen at least this long (ms)
+const MAX_TIME = 8000; // never keep visitors waiting longer than this, even on a slow connection
 const FADE_TIME = 700;
 
-/** Opening screen: a sleek wall AC in swing mode, "Cooling up…", then fades into the site. */
+/** Inner-page banners (desktop files; phones use the small "-sm" copies). */
+const PAGE_BANNERS = ['/ourservice banner.webp', '/about us banner.webp', '/project banner.webp', '/contact banner.webp'];
+
+/** Downloads + decodes one image; resolves either way (a broken image must not block the site). */
+function preload(src: string) {
+  return new Promise<void>((resolve) => {
+    const img = new Image();
+    img.decoding = 'async';
+    img.onload = () => (img.decode ? img.decode().catch(() => {}).then(() => resolve()) : resolve());
+    img.onerror = () => resolve();
+    img.src = src;
+  });
+}
+
+/** Every banner the visitor may see: home slider banners (from the admin panel) + inner-page banners. */
+async function loadAllBanners() {
+  const isPhone = window.matchMedia('(max-width: 1023px)').matches;
+  const pages = PAGE_BANNERS.map((p) => encodeURI(isPhone ? smallBanner(p) : p));
+  const home = await api
+    .getBanners()
+    .then((list) => list.map((b) => (isPhone ? b.mobile_url || b.desktop_url : b.desktop_url)))
+    .catch(() => [] as string[]);
+  // Home slides first — they're on screen the moment the intro fades
+  await Promise.all([...home, ...pages].map(preload));
+}
+
+/**
+ * Opening screen: a sleek wall AC in swing mode, "Cooling up…". It stays while the banner images
+ * download (at least MIN_TIME, at most MAX_TIME), then fades into a fully-loaded site.
+ */
 export default function Preloader() {
   const [phase, setPhase] = useState<'show' | 'leaving' | 'done'>('show');
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     const start = performance.now();
+    let finished = false;
 
     const finish = () => {
+      if (finished) return;
+      finished = true;
       const wait = Math.max(0, MIN_TIME - (performance.now() - start));
       window.setTimeout(() => {
         setPhase('leaving');
@@ -21,11 +56,14 @@ export default function Preloader() {
       }, wait);
     };
 
-    if (document.readyState === 'complete') finish();
-    else window.addEventListener('load', finish, { once: true });
+    const pageLoaded = new Promise<void>((resolve) =>
+      document.readyState === 'complete' ? resolve() : window.addEventListener('load', () => resolve(), { once: true })
+    );
+    Promise.all([pageLoaded, loadAllBanners()]).then(finish);
+    const safety = window.setTimeout(finish, MAX_TIME);
 
     return () => {
-      window.removeEventListener('load', finish);
+      window.clearTimeout(safety);
       document.body.style.overflow = '';
     };
   }, []);
