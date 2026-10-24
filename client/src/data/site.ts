@@ -16,7 +16,7 @@ export const site = {
     { label: '054-313 0666', href: 'tel:+971543130666' },
   ],
   whatsapp: '971558908664', // +971 55 890 8664 — digits only; leave empty to hide the WhatsApp button
-  email: 'mail2alsafran@gmail.com',
+  email: 'info@alsafran.tech',
   /** Social links shown in the footer — leave a link empty to hide its icon */
   social: {
     instagram: 'https://www.instagram.com/alsafranac/',
