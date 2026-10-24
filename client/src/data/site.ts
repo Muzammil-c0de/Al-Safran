@@ -8,11 +8,10 @@ export const site = {
   description:
     'Al Safran Technical Services — contracting, installation and maintenance of air-conditioning systems in the U.A.E. since 1985.',
 
-  phone: '04-236 7095',
-  phoneHref: 'tel:+97142367095',
   /** Number every "Call us" button dials */
   call: { label: '055-890 8664', href: 'tel:+971558908664' },
   mobiles: [
+    { label: '052-326 3008', href: 'tel:+971523263008' },
     { label: '055-890 8664', href: 'tel:+971558908664' },
     { label: '054-313 0666', href: 'tel:+971543130666' },
   ],

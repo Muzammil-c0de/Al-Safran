@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Clock, Mail, MapPin, Phone, Smartphone } from 'lucide-react';
+import { ArrowUpRight, Clock, Mail, MapPin, Smartphone } from 'lucide-react';
 import Logo from './Logo';
 import { navLinks, site } from '@/data/site';
 import { services } from '@/data/services';
@@ -65,12 +65,6 @@ export default function Footer() {
         <div className="lg:col-span-3">
           <h3 className="text-sm font-bold uppercase tracking-wider text-white">Get in touch</h3>
           <ul className="mt-5 space-y-4 text-sm">
-            <li className="flex gap-3">
-              <Phone className="mt-0.5 size-4 shrink-0 text-brand-400" />
-              <a href={site.phoneHref} className="transition hover:text-white">
-                {site.phone}
-              </a>
-            </li>
             <li className="flex gap-3">
               <Smartphone className="mt-0.5 size-4 shrink-0 text-brand-400" />
               <span>

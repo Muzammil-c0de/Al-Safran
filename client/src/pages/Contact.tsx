@@ -67,9 +67,8 @@ export default function Contact() {
   };
 
   const contactItems: { icon: typeof Phone; label: string; value: string; href?: string }[] = [
-    // Mobiles first (055-890 8664 at the top), then the office line
+    // Mobile numbers (052-326 3008 at the top)
     ...site.mobiles.map((m) => ({ icon: Smartphone, label: 'Mobile', value: m.label, href: m.href })),
-    { icon: Phone, label: 'Office telephone', value: site.phone, href: site.phoneHref },
     { icon: Mail, label: 'Email us', value: site.email, href: `mailto:${site.email}` },
     { icon: MapPin, label: 'Address', value: site.address },
     { icon: Clock, label: 'Service', value: site.hours },
