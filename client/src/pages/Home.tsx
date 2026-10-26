@@ -88,7 +88,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Our Services"
             title="Complete technical services under one roof"
-            subtitle="Seven specialist services covering the full building services package for new homes, offices and fit-outs."
+            subtitle="Specialist services covering the full building services package for new homes, offices and fit-outs."
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {/* Phones: stacked-card scroll — each card sticks under the navbar and the next one slides up over it */}
