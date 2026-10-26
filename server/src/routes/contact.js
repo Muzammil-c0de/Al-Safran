@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { sql, requireDb } from '../db.js';
+import { mailConfigured, sendEnquiryEmail } from '../mail.js';
 
 const router = Router();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -27,6 +28,17 @@ router.post('/', requireDb, async (req, res, next) => {
       INSERT INTO contact_messages (name, email, phone, service, message)
       VALUES (${name}, ${email}, ${phone || null}, ${service || null}, ${message})
     `;
+
+    // Also email it to the company inbox. Awaited (serverless functions stop after responding),
+    // but a mail problem never loses the enquiry — it's already saved for Admin → Messages.
+    if (mailConfigured) {
+      try {
+        await sendEnquiryEmail({ name, email, phone, service, message });
+      } catch (err) {
+        console.error('Enquiry email failed:', err.message);
+      }
+    }
+
     res.status(201).json({ ok: true });
   } catch (err) {
     next(err);
