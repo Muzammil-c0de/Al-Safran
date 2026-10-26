@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import rateLimit from 'express-rate-limit';
 import { sql, requireDb } from '../db.js';
 import { checkLogin, createSession, fixedLogin, hashPassword, requireAdmin, verifyPassword } from '../auth.js';
-import { createUploadUrl, deleteObject, verifyUpload } from '../r2.js';
+import { createUploadUrl, deleteObject, verifyUpload, uploadFile, UPLOAD_FOLDERS } from '../r2.js';
 
 // Files are uploaded by the browser straight to R2 (POST /uploads gives the link); these routes only save records.
 
@@ -42,6 +42,24 @@ router.post('/uploads', async (req, res, next) => {
     const { folder, contentType, size } = req.body || {};
     res.json(await createUploadUrl({ folder: String(folder), contentType: String(contentType), size: Number(size) }));
   } catch (err) {
+    next(err);
+  }
+});
+
+/**
+ * Backup upload path for small files (≤ 4 MB — Vercel's request-size cap): the browser sends the file to the API,
+ * which stores it in R2. Used automatically when the bucket's CORS rule blocks direct browser uploads.
+ * POST /uploads/via-api?folder=images   body = raw file, Content-Type = the file's type
+ */
+router.post('/uploads/via-api', express.raw({ type: () => true, limit: '4400kb' }), async (req, res, next) => {
+  try {
+    const folder = String(req.query.folder || '');
+    if (!UPLOAD_FOLDERS.includes(folder)) return res.status(400).json({ error: 'Invalid upload folder.' });
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0) return res.status(400).json({ error: 'No file received.' });
+    const file = await uploadFile({ buffer: req.body, mimetype: req.get('content-type') }, folder);
+    res.status(201).json({ key: file.key });
+  } catch (err) {
+    if (err.type === 'entity.too.large') return res.status(413).json({ error: 'File too large for this upload path (max 4 MB).' });
     next(err);
   }
 });

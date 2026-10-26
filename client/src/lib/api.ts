@@ -67,6 +67,32 @@ function putToStorage(uploadUrl: string, file: File, onProgress: (loaded: number
   });
 }
 
+/** Largest file the backup "via API" upload can carry (Vercel caps request bodies at ~4.5 MB). */
+const VIA_API_MAX = 4 * 1024 * 1024;
+
+/** Backup upload: sends the file to the API, which stores it in R2 (used when R2's CORS rule blocks the browser). */
+function uploadViaApi(file: File, folder: string, token: string, onProgress: (loaded: number) => void): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${BASE}/api/admin/uploads/via-api?folder=${encodeURIComponent(folder)}`);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.setRequestHeader('Content-Type', file.type);
+    xhr.upload.onprogress = (e) => onProgress(e.loaded);
+    xhr.onload = () => {
+      let data: { key?: string; error?: string } = {};
+      try {
+        data = JSON.parse(xhr.responseText);
+      } catch {
+        /* non-JSON */
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && data.key) resolve(data.key);
+      else reject(new ApiError(data.error ?? `Upload failed (${xhr.status})`, xhr.status));
+    };
+    xhr.onerror = () => reject(new ApiError('Network error — check your connection and try again.', 0));
+    xhr.send(file);
+  });
+}
+
 /** Which form fields are files, the R2 folder they go in, and the name the API expects their key under. */
 type FileFields = Record<string, { folder: string | ((f: File) => string); keyName: string }>;
 
@@ -102,11 +128,27 @@ async function submitForm<T>(
       body: { folder, contentType: file.type, size: file.size },
       token,
     });
-    await putToStorage(signed.uploadUrl, file, (n) => {
+    const progress = (n: number) => {
       loaded[field] = n;
       report();
-    });
-    body[spec.keyName] = signed.key;
+    };
+    try {
+      // Fast path: straight into R2
+      await putToStorage(signed.uploadUrl, file, progress);
+      body[spec.keyName] = signed.key;
+    } catch (err) {
+      // R2 refused the browser (no CORS rule yet) → send small files through the API instead
+      const blockedByStorage = err instanceof ApiError && (err.status === 0 || err.status === 403);
+      if (!blockedByStorage) throw err;
+      if (file.size > VIA_API_MAX) {
+        throw new ApiError(
+          `"${file.name}" is larger than 4 MB. Large files (like videos) need the CORS rule on the R2 bucket — add it in Cloudflare → R2 → alsafran → Settings → CORS Policy.`,
+          0
+        );
+      }
+      loaded[field] = 0;
+      body[spec.keyName] = await uploadViaApi(file, folder, token, progress);
+    }
   }
 
   const result = await request<T>(path, { method, body, token });
