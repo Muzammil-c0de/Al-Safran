@@ -86,7 +86,29 @@ export default function Footer() {
             </li>
             <li className="flex gap-3">
               <MapPin className="mt-0.5 size-4 shrink-0 text-brand-400" />
-              <span>{site.address}</span>
+              <a href={site.mapLink} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+                {site.address}
+              </a>
+            </li>
+            <li>
+              <a
+                href={site.mapLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open our location in Google Maps"
+                className="group relative block h-36 overflow-hidden rounded-2xl border border-white/10 shadow-lg"
+              >
+                <iframe
+                  src={site.mapPreviewUrl}
+                  title="Al Safran location"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="pointer-events-none size-full border-0"
+                />
+                <span className="absolute right-2 bottom-2 inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-xs font-semibold text-navy-900 shadow transition group-hover:bg-brand-500 group-hover:text-white">
+                  <MapPin className="size-3.5" /> Open in Maps
+                </span>
+              </a>
             </li>
             <li className="flex gap-3">
               <Clock className="mt-0.5 size-4 shrink-0 text-brand-400" />

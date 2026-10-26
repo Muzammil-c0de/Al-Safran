@@ -3,6 +3,54 @@ import type { Service } from '@/types';
 
 export const services: Service[] = [
   {
+    slug: 'ac-works',
+    title: 'HVAC Installation & Maintenance',
+    short: 'HVAC installation and maintenance for new home and office projects.',
+    description:
+      'Our technical team is experienced in all types of air-conditioning. We install systems for new construction, renovation and modification projects, and our Service department maintains residential and commercial equipment year-round.',
+    icon: AirVent,
+    image: '/images/ac%20work.webp',
+    features: [
+      'All types of air-conditioning systems',
+      'New construction & renovation installations',
+      'Residential & commercial maintenance contracts',
+      'Daily repairs on a per-call basis, year-round',
+      'Professional advice & appropriate design',
+    ],
+  },
+  {
+    slug: 'electrical',
+    title: 'Electrical Works',
+    short: 'Electrical works for new office and home projects.',
+    description:
+      'Safe, neat and code-compliant electrical installations for new homes and offices — from conduiting and wiring through to final testing and handover.',
+    icon: Zap,
+    image: '/images/electrical%20work.webp',
+    features: [
+      'Conduiting & wiring for new projects',
+      'Distribution boards, breakers & panels',
+      'Lighting, power points & switches',
+      'Earthing & safety testing',
+      'Fault finding & repairs',
+    ],
+  },
+  {
+    slug: 'plumbing',
+    title: 'Plumbing Works',
+    short: 'Plumbing works for new home and office projects.',
+    description:
+      'Reliable water supply and drainage systems for new builds and renovations, installed cleanly and pressure-tested before handover.',
+    icon: Droplets,
+    image: '/images/plumbing.webp',
+    features: [
+      'Water supply piping (PPR / CPVC)',
+      'Drainage & sewage lines',
+      'Sanitary fixtures & water heaters',
+      'Pumps & water tanks',
+      'Leak detection & repairs',
+    ],
+  },
+  {
     slug: 'chilled-water-fcu-ahu',
     title: 'Chilled Water FCU / AHU',
     short: 'Installation and maintenance of all chilled water type FCUs and AHUs.',
@@ -64,54 +112,6 @@ export const services: Service[] = [
       'Sanitizing & anti-bacterial treatment',
       'Before / after photo report',
       'Flexible scheduling, minimal disruption',
-    ],
-  },
-  {
-    slug: 'electrical',
-    title: 'Electrical Works',
-    short: 'Electrical works for new office and home projects.',
-    description:
-      'Safe, neat and code-compliant electrical installations for new homes and offices — from conduiting and wiring through to final testing and handover.',
-    icon: Zap,
-    image: '/images/electrical%20work.webp',
-    features: [
-      'Conduiting & wiring for new projects',
-      'Distribution boards, breakers & panels',
-      'Lighting, power points & switches',
-      'Earthing & safety testing',
-      'Fault finding & repairs',
-    ],
-  },
-  {
-    slug: 'ac-works',
-    title: 'AC Works',
-    short: 'AC works for new home and office projects.',
-    description:
-      'Our technical team is experienced in all types of air-conditioning. We install systems for new construction, renovation and modification projects, and our Service department maintains residential and commercial equipment year-round.',
-    icon: AirVent,
-    image: '/images/ac%20work.webp',
-    features: [
-      'All types of air-conditioning systems',
-      'New construction & renovation installations',
-      'Residential & commercial maintenance contracts',
-      'Daily repairs on a per-call basis, year-round',
-      'Professional advice & appropriate design',
-    ],
-  },
-  {
-    slug: 'plumbing',
-    title: 'Plumbing Works',
-    short: 'Plumbing works for new home and office projects.',
-    description:
-      'Reliable water supply and drainage systems for new builds and renovations, installed cleanly and pressure-tested before handover.',
-    icon: Droplets,
-    image: '/images/plumbing.webp',
-    features: [
-      'Water supply piping (PPR / CPVC)',
-      'Drainage & sewage lines',
-      'Sanitary fixtures & water heaters',
-      'Pumps & water tanks',
-      'Leak detection & repairs',
     ],
   },
 ];

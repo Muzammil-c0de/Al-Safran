@@ -11,9 +11,8 @@ export const site = {
   /** Number every "Call us" button dials */
   call: { label: '055-890 8664', href: 'tel:+971558908664' },
   mobiles: [
-    { label: '052-326 3008', href: 'tel:+971523263008' },
     { label: '055-890 8664', href: 'tel:+971558908664' },
-    { label: '054-313 0666', href: 'tel:+971543130666' },
+    { label: '052-326 3008', href: 'tel:+971523263008' },
   ],
   whatsapp: '971558908664', // +971 55 890 8664 — digits only; leave empty to hide the WhatsApp button
   email: 'info@alsafran.tech',
@@ -22,7 +21,13 @@ export const site = {
     instagram: 'https://www.instagram.com/alsafranac/',
     facebook: '', // TODO: add the Facebook page link
   },
-  address: 'P.O. Box 76368, Dubai, U.A.E.',
+  address:
+    'P.O.Box:76368, Shop#45, Shaikh Abdul Aziz Mohamed Majid Al Mualla Building, Al Rigga-Dubai.',
+  /** Google Maps share link (opens the location in Maps). */
+  mapLink: 'https://maps.app.goo.gl/1RF9E9RT52yJtH416?g_st=awb',
+  /** Small map preview in the footer (keyless Google Maps embed of the address). */
+  mapPreviewUrl:
+    'https://maps.google.com/maps?q=Abdul+Aziz+Mohamed+Majid+Al+Mualla+Building,+Al+Rigga,+Dubai&z=16&output=embed',
   hours: 'Service calls attended year-round',
 
   /** Google Maps "Embed a map" src URL. Leave empty to hide the map. */
