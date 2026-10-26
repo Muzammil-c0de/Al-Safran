@@ -1,15 +1,22 @@
 import nodemailer from 'nodemailer';
 
 /**
- * Sends contact-form enquiries to the company inbox, using the mailbox's own SMTP login.
- * Settings (server/.env and Vercel): SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_TO (defaults to SMTP_USER).
+ * Sends contact-form enquiries to the company inbox (MAIL_TO, default info@alsafran.tech).
+ * Two ways, in this order:
+ *  1. SMTP (optional) — SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS: sends through the mailbox's own login.
+ *  2. FormSubmit relay (default, no password needed) — https://formsubmit.co delivers the enquiry to MAIL_TO.
+ *     The first enquiry sends an "Activate form" email to MAIL_TO; click its link once.
  */
-const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, MAIL_TO } = process.env;
+const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env;
+const MAIL_TO = process.env.MAIL_TO || 'info@alsafran.tech';
+const SITE_URL = process.env.SITE_URL || 'https://alsafran.tech';
 
-export const mailConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
+const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
+/** Email delivery is on unless explicitly disabled with MAIL_TO=off */
+export const mailConfigured = MAIL_TO !== 'off';
 
 const port = Number(SMTP_PORT) || 465;
-const transport = mailConfigured
+const transport = smtpConfigured
   ? nodemailer.createTransport({
       host: SMTP_HOST,
       port,
@@ -24,9 +31,35 @@ const transport = mailConfigured
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-/** Emails one enquiry. Throws on failure (the caller decides what to do). */
-export async function sendEnquiryEmail({ name, email, phone, service, message }) {
-  if (!transport) throw new Error('Email is not configured (SMTP settings missing).');
+/** Delivers one enquiry via the FormSubmit relay (no mailbox password needed). */
+async function sendViaFormSubmit({ name, email, phone, service, message }) {
+  const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(MAIL_TO)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json', Origin: SITE_URL, Referer: `${SITE_URL}/contact` },
+    body: JSON.stringify({
+      _subject: `New enquiry — ${name}${service ? ` (${service})` : ''}`,
+      _template: 'table',
+      _captcha: 'false',
+      _replyto: email, // pressing Reply answers the customer
+      Name: name,
+      Email: email,
+      Phone: phone || '—',
+      Service: service || '—',
+      Message: message,
+    }),
+    signal: AbortSignal.timeout(9000),
+  });
+  const data = await res.json().catch(() => ({}));
+  // FormSubmit answers success:"false" with an "Activate" message until the inbox owner confirms once
+  if (!res.ok || String(data.success) !== 'true') {
+    throw new Error(`FormSubmit: ${data.message || `HTTP ${res.status}`}`);
+  }
+}
+
+/** Emails one enquiry to the company inbox. Throws on failure (the caller decides what to do). */
+export async function sendEnquiryEmail(enquiry) {
+  if (!transport) return sendViaFormSubmit(enquiry);
+  const { name, email, phone, service, message } = enquiry;
 
   const rows = [
     ['Name', name],
@@ -76,7 +109,7 @@ ${message}
 
   await transport.sendMail({
     from: { name: 'Al Safran Website', address: SMTP_USER },
-    to: MAIL_TO || SMTP_USER,
+    to: MAIL_TO,
     replyTo: { name, address: email },
     subject: `New enquiry — ${name}${service ? ` (${service})` : ''}`,
     text,
