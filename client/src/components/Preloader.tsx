@@ -78,43 +78,29 @@ export default function Preloader() {
       role="status"
       aria-label={`Loading ${site.name}`}
     >
-      <div className="flex animate-fade-up flex-col items-center px-6">
-        <AcUnit />
-        <p className="mt-6 font-display text-sm font-bold tracking-[0.45em] text-navy-900/70 uppercase">
-          Cooling up<span className="cooling-dots" />
-        </p>
+      <div className="flex flex-col items-center px-6">
+        {/* Logo — appears first */}
+        <div className="relative grid size-36 animate-fade-up place-items-center sm:size-40">
+          <span className="absolute inset-0 animate-ping rounded-full bg-brand-200/50 [animation-duration:2.2s]" />
+          <span className="absolute -inset-3 rounded-full border-2 border-dashed border-brand-500/25 animate-spin-slow" />
+          <img
+            src="/logo.png"
+            alt={site.name}
+            className="relative size-full rounded-full bg-white object-contain shadow-[0_12px_40px_rgba(29,116,224,0.25)] ring-1 ring-brand-100"
+          />
+        </div>
+
+        {/* Loading tag — appears just after the logo */}
+        <div className="mt-10 flex animate-fade-up flex-col items-center [animation-delay:350ms]">
+          <span className="glass-tag px-5 py-2 text-xs text-navy-900 ring-1 ring-brand-100">
+            <span className="relative size-2 animate-pulse rounded-full bg-brand-500" />
+            Loading<span className="cooling-dots" />
+          </span>
+          <span className="mt-5 block h-1 w-40 overflow-hidden rounded-full bg-brand-100">
+            <span className="loader-bar block h-full w-1/3 rounded-full bg-gradient-to-r from-ice-400 to-brand-500" />
+          </span>
+        </div>
       </div>
     </div>
-  );
-}
-
-/** Line-drawing of a wall AC: outlines draw themselves in, the flap swings, thin air lines drift down. */
-function AcUnit() {
-  return (
-    <svg viewBox="0 0 200 120" className="w-44 sm:w-52" fill="none" stroke="#1739a8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      {/* Body */}
-      <path className="ac-draw" pathLength={1} strokeWidth={2.4} d="M22 10 h156 a14 14 0 0 1 14 14 v22 a14 14 0 0 1 -14 14 h-156 a14 14 0 0 1 -14 -14 v-22 a14 14 0 0 1 14 -14 z" />
-      {/* Panel seam */}
-      <path className="ac-draw [animation-delay:0.25s]" pathLength={1} strokeWidth={1.4} strokeOpacity={0.5} d="M14 36 H186" />
-      {/* Display */}
-      <path className="ac-draw [animation-delay:0.4s]" pathLength={1} strokeWidth={1.6} d="M146 19 h24 a4 4 0 0 1 4 4 v2 a4 4 0 0 1 -4 4 h-24 a4 4 0 0 1 -4 -4 v-2 a4 4 0 0 1 4 -4 z" />
-      <circle cx="136" cy="24" r="2" fill="#3fd8ee" stroke="none" className="ac-light" />
-      {/* Vent */}
-      <path className="ac-draw [animation-delay:0.55s]" pathLength={1} strokeWidth={1.6} d="M28 50 H172" />
-      {/* Swinging flap */}
-      <g className="ac-flap">
-        <path strokeWidth={1.8} fill="#eef6ff" d="M30 54 H170 L165 61 H35 Z" />
-      </g>
-
-      {/* Air: thin lines drifting down from the vent */}
-      <g className="ac-air" stroke="#3fd8ee" strokeWidth={1.4}>
-        {[48, 72, 96, 120, 144].map((x, i) => (
-          <line key={x} x1={x} y1={68} x2={x} y2={84} className="ac-breeze" style={{ animationDelay: `${i * 0.18}s` }} />
-        ))}
-        {[60, 84, 108, 132].map((x, i) => (
-          <line key={x} x1={x} y1={74} x2={x} y2={86} className="ac-breeze" style={{ animationDelay: `${0.45 + i * 0.18}s` }} />
-        ))}
-      </g>
-    </svg>
   );
 }

@@ -329,6 +329,19 @@
     content: '...';
   }
 }
+/* Opening screen: loading bar sweeping left → right */
+.loader-bar {
+  animation: loader-bar 1.3s ease-in-out infinite;
+}
+@keyframes loader-bar {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
 /* Line-art AC: outlines draw themselves in */
 .ac-draw {
   stroke-dasharray: 1;
